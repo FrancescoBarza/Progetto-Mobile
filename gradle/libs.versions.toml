@@ -17,6 +17,7 @@ navigationCompose = "2.8.9"
 navigationRuntimeAndroid = "2.9.0"
 
 lifecycleRuntimeComposeAndroid = "2.8.7"
+uiTextGoogleFonts = "1.8.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +45,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 
 #aggiunti
 androidx-lifecycle-runtime-compose-android = { group ="androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref ="lifecycleRuntimeComposeAndroid" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

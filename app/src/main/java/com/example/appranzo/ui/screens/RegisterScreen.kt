@@ -20,8 +20,45 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
             .padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Login", style = MaterialTheme.typography.headlineMedium)
+        Text("Registrati su APPranzo", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(24.dp))
+
+        OutlinedTextField(
+            value = state.name,
+            onValueChange = viewModel::onNameChange,
+            label = { Text("Nome") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        OutlinedTextField(
+            value = state.surname,
+            onValueChange = viewModel::onSurnameChange,
+            label = { Text("Cognome") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        OutlinedTextField(
+            value = state.username,
+            onValueChange = viewModel::onUsernameChange,
+            label = { Text("Username") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        OutlinedTextField(
+            value = state.dateOfBirth,
+            onValueChange = viewModel::onDateOfBirthChange,
+            label = { Text("Data di nascita (gg/mm/aaaa)") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value = state.email,
@@ -30,21 +67,29 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(Modifier.height(16.dp))
+
+        Spacer(Modifier.height(12.dp))
+
         OutlinedTextField(
             value = state.password,
             onValueChange = viewModel::onPasswordChange,
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
+            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
+
         Spacer(Modifier.height(16.dp))
-        if (state.error != null) {
-            Text(state.error ?: "", color = MaterialTheme.colorScheme.error)
+
+        state.error?.let {
+            Text(it, color = MaterialTheme.colorScheme.error)
+            Spacer(Modifier.height(8.dp))
         }
 
         Button(
-            onClick = { viewModel.register { navController.navigate("home") } },
+            onClick = {
+                viewModel.register { navController.navigate("home") }
+            },
             modifier = Modifier.fillMaxWidth(),
             enabled = !state.isLoading
         ) {
@@ -55,8 +100,8 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
             }
         }
 
-
         Spacer(Modifier.height(8.dp))
+
         TextButton(onClick = { navController.navigate("login") }) {
             Text("Hai già un account? Accedi")
         }
