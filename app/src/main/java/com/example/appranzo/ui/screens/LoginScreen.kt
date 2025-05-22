@@ -90,9 +90,15 @@ fun LoginScreen(
                 Spacer(Modifier.height(16.dp))
             }
 
-            // Pulsante “Entra” con colori Primary/OnPrimary
+            // Pulsante “Entra”
             Button(
-                onClick = { viewModel.login { navController.navigate("home") } },
+                onClick = {
+                    viewModel.login { navController.navigate("home") }
+                    // simuliamo login sempre positivo:
+                    navController.navigate("badgeRoad") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                          },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !state.isLoading,
                 colors = ButtonDefaults.buttonColors(
