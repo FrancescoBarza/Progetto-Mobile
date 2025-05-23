@@ -1,17 +1,22 @@
+
 package com.example.appranzo.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.appranzo.ui.navigation.Routes
 import com.example.appranzo.viewmodel.AuthViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koinViewModel()) {
+fun RegisterScreen(
+    navController: NavController,
+    viewModel: AuthViewModel = koinViewModel()
+) {
     val state by viewModel.state.collectAsState()
 
     Column(
@@ -29,7 +34,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
             label = { Text("Nome") },
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
@@ -38,7 +42,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
             label = { Text("Cognome") },
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
@@ -47,7 +50,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
             label = { Text("Username") },
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
@@ -57,7 +59,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
@@ -67,7 +68,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
@@ -78,7 +78,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(Modifier.height(16.dp))
 
         state.error?.let {
@@ -88,13 +87,24 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
 
         Button(
             onClick = {
-                viewModel.register { navController.navigate("home") }
+                // ── Simulazione: registrazione sempre OK ──
+                navController.navigate(Routes.MAIN) {
+                    popUpTo(Routes.REGISTER) { inclusive = true }
+                }
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !state.isLoading
+            enabled = !state.isLoading,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor   = MaterialTheme.colorScheme.onPrimary
+            )
         ) {
             if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(18.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    color    = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
             } else {
                 Text("Registrati")
             }
@@ -102,7 +112,17 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = koin
 
         Spacer(Modifier.height(8.dp))
 
-        TextButton(onClick = { navController.navigate("login") }) {
+        TextButton(
+            onClick = {
+                // torna al login
+                navController.navigate(Routes.LOGIN) {
+                    popUpTo(Routes.REGISTER) { inclusive = true }
+                }
+            },
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = MaterialTheme.colorScheme.secondary
+            )
+        ) {
             Text("Hai già un account? Accedi")
         }
     }
