@@ -1,10 +1,13 @@
 
 package com.example.appranzo.ui.screens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -18,6 +21,19 @@ fun LoginScreen(
     viewModel: AuthViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val ctx = LocalContext.current
+
+    fun toastError(str: String) {
+            /*Toast.makeText(
+                ctx,
+                str,
+                Toast.LENGTH_SHORT
+            ).show()*/
+        println(str)
+    }
+
+    fun onSuccesfullLogin(){}
+
 
     Column(
         modifier = Modifier
@@ -33,9 +49,9 @@ fun LoginScreen(
         Spacer(Modifier.height(24.dp))
 
         OutlinedTextField(
-            value = state.email,
-            onValueChange = viewModel::onEmailChange,
-            label = { Text("Email") },
+            value = state.username,
+            onValueChange = viewModel::onUsernameChange,
+            label = { Text("Username") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -62,22 +78,20 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                // ── Simulazione: login sempre OK ──
-                navController.navigate(Routes.MAIN) {
-                    popUpTo(Routes.LOGIN) { inclusive = true }
-                }
+                viewModel.login({ onSuccesfullLogin() },{message->toastError(message)}, ctx)
+
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = !state.isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor   = MaterialTheme.colorScheme.onPrimary
+                contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
             if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(18.dp),
-                    color    = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     strokeWidth = 2.dp
                 )
             } else {
@@ -101,3 +115,5 @@ fun LoginScreen(
         }
     }
 }
+
+

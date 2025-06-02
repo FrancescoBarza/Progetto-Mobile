@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -18,6 +19,8 @@ fun RegisterScreen(
     viewModel: AuthViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val ctx = LocalContext.current
+
 
     Column(
         modifier = Modifier
@@ -29,7 +32,7 @@ fun RegisterScreen(
         Spacer(Modifier.height(24.dp))
 
         OutlinedTextField(
-            value = state.name,
+            value = state.username,
             onValueChange = viewModel::onNameChange,
             label = { Text("Nome") },
             modifier = Modifier.fillMaxWidth()
@@ -87,10 +90,7 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                // ── Simulazione: registrazione sempre OK ──
-                navController.navigate(Routes.MAIN) {
-                    popUpTo(Routes.REGISTER) { inclusive = true }
-                }
+                viewModel.register({println("ciao")},ctx)
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = !state.isLoading,
