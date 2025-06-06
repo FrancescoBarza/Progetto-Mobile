@@ -32,7 +32,7 @@ fun RegisterScreen(
         Spacer(Modifier.height(24.dp))
 
         OutlinedTextField(
-            value = state.username,
+            value = state.name,
             onValueChange = viewModel::onNameChange,
             label = { Text("Nome") },
             modifier = Modifier.fillMaxWidth()
@@ -51,15 +51,6 @@ fun RegisterScreen(
             value = state.username,
             onValueChange = viewModel::onUsernameChange,
             label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = state.dateOfBirth,
-            onValueChange = viewModel::onDateOfBirthChange,
-            label = { Text("Data di nascita (gg/mm/aaaa)") },
-            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(12.dp))

@@ -27,7 +27,6 @@ data class AuthUiState(
     val name: String = "",
     val surname: String = "",
     val username: String = "",
-    val dateOfBirth: String = "",
 
     val email: String = "",
     val password: String = "",
@@ -43,7 +42,7 @@ class AuthViewModel(private val restApiClient: RestApiClient,private val tokensR
     fun onNameChange(value: String) = _state.update { it.copy(name = value) }
     fun onSurnameChange(value: String) = _state.update { it.copy(surname = value) }
     fun onUsernameChange(value: String) = _state.update { it.copy(username = value) }
-    fun onDateOfBirthChange(value: String) = _state.update { it.copy(dateOfBirth = value) }
+
 
     fun onEmailChange(value: String) {
         _state.update { it.copy(email = value, error = null) }
