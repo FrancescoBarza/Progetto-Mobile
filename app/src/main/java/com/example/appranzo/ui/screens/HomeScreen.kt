@@ -55,7 +55,6 @@ import com.example.appranzo.ui.navigation.Routes
 
 
 fun onClickPlace(place: Place){
-    RestaurantDetailContent(place, innerPadding = PaddingValues(0.dp))
 }
 
 
