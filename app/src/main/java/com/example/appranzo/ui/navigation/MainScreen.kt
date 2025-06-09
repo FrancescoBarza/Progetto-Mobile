@@ -58,10 +58,10 @@ fun MainScreen(navController: NavController) {
     ) { innerPadding ->
         NavHost(
             navController    = tabNav,
-            startDestination = Routes.TAB_FRIENDS,  // avvia già da “Amici”
+            startDestination = Routes.TAB_HOME,
             modifier         = Modifier.padding(innerPadding)
         ) {
-            composable(Routes.TAB_HOME)      {       }
+            composable(Routes.TAB_HOME)      { HomeScreen()    }
             composable(Routes.TAB_FAVORITES) {  }
             composable(Routes.TAB_MAP)       {        }
             composable(Routes.TAB_FRIENDS)   { FriendsScreen()   }

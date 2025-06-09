@@ -32,7 +32,12 @@ fun LoginScreen(
         println(str)
     }
 
-    fun onSuccesfullLogin(){}
+    fun onSuccesfullLogin(navController: NavController){
+        navController
+            .navigate(Routes.MAIN) {
+                popUpTo(Routes.LOGIN) { inclusive = true }
+            }
+    }
 
 
     Column(
@@ -78,7 +83,7 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                viewModel.login({ onSuccesfullLogin() },{message->toastError(message)}, ctx)
+                viewModel.login({ onSuccesfullLogin(navController) },{message->toastError(message)}, ctx)
 
             },
             modifier = Modifier.fillMaxWidth(),

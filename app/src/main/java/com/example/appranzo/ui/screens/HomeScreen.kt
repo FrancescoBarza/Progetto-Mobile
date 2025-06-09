@@ -1,6 +1,7 @@
 package com.example.appranzo.ui.screens
 
 import android.text.style.BackgroundColorSpan
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,15 +46,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.appranzo.R
 import com.example.appranzo.data.models.Category
 import com.example.appranzo.data.models.Place
+import com.example.appranzo.ui.navigation.Routes
 
-@Preview
+
+fun onClickPlace(place: Place){
+    RestaurantDetailContent(place, innerPadding = PaddingValues(0.dp))
+}
+
+
 @Composable
 fun HomeScreen(){
-    val place = Place(1,"rest","Top","Ortona",null,"pizza",3.0,200.0)
+    val place = Place(1,"rest","Top","Via Bella","Ortona",null,"pizza",3.0,200.0)
     LazyColumn( modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 16.dp)
     ){
@@ -68,7 +76,7 @@ fun HomeScreen(){
         item {
             MainTitle("Alta Valutazione", modifier = Modifier.padding(horizontal = 16.dp))
             Spacer(modifier = Modifier.height(8.dp))
-            HighlitedRestaurants(listOf(place,place,place,place))
+            HighlitedRestaurants(listOf(place,place,place,place),{place->onClickPlace(place)})
         }
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
@@ -83,8 +91,8 @@ fun HomeScreen(){
             }
             Spacer(modifier = Modifier.height(8.dp))
             for(place in listOf(place,place,place,place)){
-                    PlaceWithDescription(place)
-                    Spacer(modifier = Modifier.height(15.dp))
+                PlaceWithDescription(place, modifier = Modifier , {placeB->onClickPlace(placeB)} )
+                Spacer(modifier = Modifier.height(15.dp))
             }
         }
 
@@ -152,37 +160,37 @@ fun MainTitle(title: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HighlitedRestaurants(places:List<Place>){
+fun HighlitedRestaurants(places:List<Place>, onClickColumn:(Place)->Unit){
     LazyRow(
         modifier = Modifier,
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-            items(places) {place->
-                Column {
-                    Card(modifier = Modifier.size(width = 280.dp, height = 180.dp)) {
-                        AsyncImage(
-                            model = place.photoUrl,
-                            contentDescription = "${place.description}",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop,
-                            error = painterResource(id = R.drawable.restaurantplaceholder),
-                            placeholder = painterResource(id = R.drawable.restaurantplaceholder)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(18.dp))
-                    Text("${place.name.capitalize()}", fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth() )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Row {
-                        for (i in 1..place.rating.toInt()) {
-                            Icon(imageVector = Icons.Default.Star, "Rating icon")
-                        }
+        items(places) {place->
+            Column(modifier = Modifier.clickable { onClickColumn(place) }) {
+                Card(modifier = Modifier.size(width = 280.dp, height = 180.dp)) {
+                    AsyncImage(
+                        model = place.photoUrl,
+                        contentDescription = "${place.description}",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.restaurantplaceholder),
+                        placeholder = painterResource(id = R.drawable.restaurantplaceholder)
+                    )
+                }
+                Spacer(modifier = Modifier.height(18.dp))
+                Text("${place.name.capitalize()}", fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth() )
+                Spacer(modifier = Modifier.height(5.dp))
+                Row {
+                    for (i in 1..place.rating.toInt()) {
+                        Icon(imageVector = Icons.Default.Star, "Rating icon")
                     }
                 }
             }
+        }
     }
 }
 
@@ -197,8 +205,8 @@ fun SecondaryTitle(title: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PlaceWithDescription(place:Place,modifier: Modifier=Modifier){
-    Card(modifier = modifier.fillMaxWidth()) {
+fun PlaceWithDescription(place:Place,modifier: Modifier=Modifier, OnClickPlace:(Place)->Unit){
+    Card(modifier = modifier.fillMaxWidth().clickable { OnClickPlace(place) }) {
         Row(modifier = Modifier.padding(12.dp)) {
             AsyncImage(
                 model = place.photoUrl,

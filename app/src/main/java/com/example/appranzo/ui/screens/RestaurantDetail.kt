@@ -1,61 +1,33 @@
 
 package com.example.appranzo.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.appranzo.ui.theme.APPranzoTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SmallTopAppBar
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.TextButton
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.StarHalf
 import androidx.compose.material.icons.filled.StarRate
-import androidx.navigation.compose.rememberNavController
-import com.example.appranzo.ui.navigation.AppNavGraph
+import com.example.appranzo.data.models.Place
 
 // -------------------
 // Data classes
 // -------------------
-data class Restaurant(
-    val name: String,
-    val cuisine: String,
-    val address: String,
-    val distanceKm: Double,
-    val averageRating: Double,       // da 0.0 a 5.0
-    val ratingCounts: Map<Int, Int>, // chiave = stelle (1..5), valore = numero di recensioni
-    val reviews: List<Review>
-)
 
 data class Review(
     val author: String,
@@ -69,7 +41,7 @@ data class Review(
 // ----------------------------------------------------
 @Composable
 fun RestaurantDetailContent(
-    restaurant: Restaurant,
+    restaurant: Place,
     innerPadding: PaddingValues
 ) {
     LazyColumn(
@@ -108,12 +80,12 @@ fun RestaurantDetailContent(
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "${restaurant.cuisine} • ${restaurant.address}",
+                    text = "${restaurant.categoryName} • ${restaurant.address}",
                     style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = String.format("%.1f km", restaurant.distanceKm),
+                    text = String.format("%.1f km", restaurant.distanceFromUser),
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.primary)
                 )
             }
@@ -133,12 +105,12 @@ fun RestaurantDetailContent(
                 Spacer(Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = String.format("%.1f", restaurant.averageRating),
+                        text = String.format("%.1f", restaurant.rating),
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
                     )
                     Spacer(Modifier.width(8.dp))
-                    val filledStars = restaurant.averageRating.toInt()
-                    val halfStar = ((restaurant.averageRating - filledStars) >= 0.5)
+                    val filledStars = restaurant.rating.toInt()
+                    val halfStar = ((restaurant.rating - filledStars) >= 0.5)
                     for (i in 1..5) {
                         val icon = when {
                             i <= filledStars -> Icons.Default.StarRate // qui potresti cambiare con ic_star_filled
@@ -166,16 +138,14 @@ fun RestaurantDetailContent(
             )
             Spacer(Modifier.height(8.dp))
 
-            val maxCount = remember(restaurant.ratingCounts) {
-                restaurant.ratingCounts.values.maxOrNull() ?: 1
-            }
+            val maxCount = 5  //TODO numero recensioni con tot stelle
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 (5 downTo 1).forEach { starValue ->
-                    val count = restaurant.ratingCounts[starValue] ?: 0
+                    val count = 5
                     RatingBarRow(
                         star = starValue,
                         count = count,
-                        maxCount = maxCount,
+                        maxCount = 10,
                         barHeight = 12.dp,
                         barColor = MaterialTheme.colorScheme.primary
                     )
@@ -196,7 +166,7 @@ fun RestaurantDetailContent(
         }
 
         // Elenco delle recensioni
-        items(restaurant.reviews) { review ->
+      /*  items(restaurant.reviews) { review ->
             ReviewItem(review)
             Divider(modifier = Modifier.padding(vertical = 8.dp))
         }
@@ -218,7 +188,7 @@ fun RestaurantDetailContent(
                 }
             }
             Spacer(Modifier.height(16.dp))
-        }
+        } */
 
         // 8) Spazio finale per non coprire il contenuto
         item {
@@ -319,35 +289,15 @@ private fun ReviewItem(review: Review) {
 // ----------------------
 // Preview di sola UI
 // ----------------------
-private val sampleRestaurant = Restaurant(
+private val sampleRestaurant = Place(
+    id = 1,
     name = "Trattoria Da Mario",
-    cuisine = "Romagnolo",
+    categoryName = "Romagnolo",
     address = "Via Roma, 12 – Cesena",
-    distanceKm = 2.3,
-    averageRating = 4.2,
-    ratingCounts = mapOf(
-        5 to 40,
-        4 to 15,
-        3 to 5,
-        2 to 2,
-        1 to 1
-    ),
-    reviews = listOf(
-        Review("Laura", "01/05/2025", 5, "Cappelletti squisiti, atmosfera calda."),
-        Review("Marco", "15/04/2025", 4, "Buono ma un po’ caro."),
-        Review("Sara",  "10/04/2025", 2, "Male Male.")
-    )
+    distanceFromUser = 2.3,
+    rating = 4.0,
+    description = "ciao",
+    city = "Cesena",
+    photoUrl = ""
 )
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 800)
-@Composable
-fun RestaurantDetailPreview() {
-    APPranzoTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-        RestaurantDetailContent(
-            restaurant = sampleRestaurant,
-            innerPadding = PaddingValues(0.dp)
-        )
-    }
-    }
-}

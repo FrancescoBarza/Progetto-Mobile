@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 data class AuthUiState(
@@ -65,7 +66,9 @@ class AuthViewModel(private val restApiClient: RestApiClient,private val tokensR
                     when (result) {
                         is AuthResults.TokenDtos -> {
                             addTokens(result.accessToken,result.refreshToken)
-                            onSuccess()
+                            withContext(Dispatchers.Main){
+                                onSuccess()
+                            }
                             _state.update { it.copy(error = result.refreshToken) }
 
                         }

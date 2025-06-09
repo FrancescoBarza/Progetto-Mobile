@@ -4,6 +4,7 @@ data class Place(
     val id:Int,
     val name:String,
     val description :String?,
+    val address: String?,
     val city: String,
     val photoUrl: String?,
     val categoryName: String,

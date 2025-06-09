@@ -20,7 +20,7 @@ class PlacesViewModel(placesRepository: PlacesRepository):ViewModel(){
     val placesState = _placesState.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = Place(id=1,name="restaurant", description = "description", city = "City", photoUrl = null, categoryName = "pizza", rating = 3.0, distanceFromUser = 500.0)
+        initialValue = Place(id=1,name="restaurant", description = "description", address = "" ,city = "City", photoUrl = null, categoryName = "pizza", rating = 3.0, distanceFromUser = 500.0)
     )
 
 }
