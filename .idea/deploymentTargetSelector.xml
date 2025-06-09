@@ -16,7 +16,7 @@
       <SelectionState runConfigName="RestaurantDetailPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ThemeScreenPreview">
+      <SelectionState runConfigName="HomeScreen">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
