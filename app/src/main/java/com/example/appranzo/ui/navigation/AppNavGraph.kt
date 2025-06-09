@@ -15,6 +15,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.appranzo.ui.navigation.Routes.MAIN
 import com.example.appranzo.ui.navigation.Routes.REGISTER
 import com.example.appranzo.ui.navigation.Routes.LOGIN
+import com.example.appranzo.ui.navigation.Routes.SETTINGS
+import com.example.appranzo.ui.screens.SettingsScreen
 import com.example.appranzo.ui.screens.ThemeScreen
 import com.example.appranzo.ui.screens.ThemeState
 import com.example.appranzo.ui.screens.ThemeViewModel
@@ -41,16 +43,18 @@ fun AppNavGraph(navController: NavHostController) {
             MainScreen(navController = navController)
         }
         composable(Routes.SETTINGS) {
-            // inietto il ViewModel
-            val themeViewModel: ThemeViewModel = koinViewModel()
-            // leggo lo stato corrente (Light/Dark/System)
-            val state by themeViewModel.state.collectAsStateWithLifecycle()
-            // mostro la ThemeScreen
-            ThemeScreen(
-                state = ThemeState(state.theme),
-                onThemeSelected = { newTheme ->
-                    themeViewModel.changeTheme(newTheme)
-                }
+            SettingsScreen(navController = navController)
+        }
+
+        // 4) Sottomenu “Aspetto / Tema”
+        composable(Routes.SETTINGS_THEME) {
+            // inietto ThemeViewModel da Koin
+            val vm: ThemeViewModel = koinViewModel()
+            val themeState by vm.state.collectAsStateWithLifecycle()
+            ThemeScreen (
+                state           = ThemeState(themeState.theme),
+                onThemeSelected = { vm.changeTheme(it) },
+                onBack = {navController.popBackStack()}
             )
         }
     }

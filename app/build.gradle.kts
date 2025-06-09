@@ -62,7 +62,17 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.ui.text.google.fonts)
+    // Osmdroid
+    implementation ("org.osmdroid:osmdroid-android:6.1.10")
 
+    // Accompanist Permissions
+    implementation ("com.google.accompanist:accompanist-permissions:0.30.1")
+
+    // Lifecycle–Compose (for LocalLifecycleOwner)
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+
+    // Preference KTX (for PreferenceManager)
+    implementation ("androidx.preference:preference-ktx:1.2.0")
 
 
     testImplementation(libs.junit)

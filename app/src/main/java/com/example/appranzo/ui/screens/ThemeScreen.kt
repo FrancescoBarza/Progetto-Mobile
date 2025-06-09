@@ -7,10 +7,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,12 +28,27 @@ import com.example.appranzo.data.models.Theme
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeScreen(
     state: ThemeState,
-    onThemeSelected: (Theme) -> Unit
+    onThemeSelected: (Theme) -> Unit,
+    onBack: ()->Unit
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("Tema") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector   = Icons.Default.ArrowBack,
+                            contentDescription = "Indietro"
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
         Column(Modifier.padding(innerPadding).selectableGroup()) {
             Theme.entries.forEach { theme ->
                 Row(

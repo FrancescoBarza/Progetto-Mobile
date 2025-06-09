@@ -23,8 +23,20 @@ fun MainScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
+            val backStack by tabNav.currentBackStackEntryAsState()
+            val currentRoute = backStack?.destination?.route
+
+            val screenTitle = when (currentRoute) {
+                Routes.TAB_HOME      -> "APPranzo"
+                Routes.TAB_FAVORITES -> "Preferiti"
+                Routes.TAB_MAP       -> "Mappa"
+                Routes.TAB_FRIENDS   -> "Amici"
+                Routes.TAB_BADGES    -> "Badge"
+                else -> "APPranzo"
+            }
+
             TopAppBar(
-                title = { Text("APPranzo") },
+                title = { Text(screenTitle) },
                 actions = {
                     IconButton(onClick = { navController.navigate(Routes.PROFILE) }) {
                         Icon(Icons.Filled.Person, contentDescription = "Profilo")
@@ -61,10 +73,10 @@ fun MainScreen(navController: NavController) {
             startDestination = Routes.TAB_HOME,
             modifier         = Modifier.padding(innerPadding)
         ) {
-            composable(Routes.TAB_HOME)      { HomeScreen()    }
+            composable(Routes.TAB_HOME)      { HomeScreen() }
             composable(Routes.TAB_FAVORITES) {  }
-            composable(Routes.TAB_MAP)       {        }
-            composable(Routes.TAB_FRIENDS)   { FriendsScreen()   }
+            composable(Routes.TAB_MAP)       { MapScreen() }
+            composable(Routes.TAB_FRIENDS)   { FriendsScreen() }
             composable(Routes.TAB_BADGES)    { BadgeRoadScreen() }
         }
     }
