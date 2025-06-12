@@ -2,6 +2,8 @@
 package com.example.appranzo.ui.screens
 
 import android.content.Context
+import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -10,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
+import com.example.appranzo.MainActivity
 import com.example.appranzo.ui.navigation.Routes
 import com.example.appranzo.viewmodel.AuthViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -24,19 +28,18 @@ fun LoginScreen(
     val ctx = LocalContext.current
 
     fun toastError(str: String) {
-            /*Toast.makeText(
-                ctx,
-                str,
-                Toast.LENGTH_SHORT
-            ).show()*/
-        println(str)
+            Log.e("LoginScreen",str)
     }
 
-    fun onSuccesfullLogin(navController: NavController){
-        navController
-            .navigate(Routes.MAIN) {
-                popUpTo(Routes.LOGIN) { inclusive = true }
-            }
+    fun onSuccesfullLogin(navController: NavController,ctx:Context){
+        val intent = Intent(ctx, MainActivity::class.java)
+        ctx.startActivity(intent)
+    }
+
+    LaunchedEffect(navController,ctx){
+        if(viewModel.automaticLogin()){
+            onSuccesfullLogin(navController,ctx)
+        }
     }
 
 
@@ -83,7 +86,7 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                viewModel.login({ onSuccesfullLogin(navController) },{message->toastError(message)}, ctx)
+                viewModel.login({ onSuccesfullLogin(navController,ctx) },{message->toastError(message)}, ctx)
 
             },
             modifier = Modifier.fillMaxWidth(),

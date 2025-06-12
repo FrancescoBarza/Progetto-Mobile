@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class TokensRepository(private val dataStore: DataStore<Preferences>) {
@@ -32,5 +33,29 @@ class TokensRepository(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { it[ACCESS_TOKEN] = accessToken }
         dataStore.edit { it[REFRESH_TOKEN] = refreshToken }
     }
+
+    suspend fun hasTokens(): Boolean {
+         try {
+            val preferences = dataStore.data.first()
+            val currentAccessToken = preferences[ACCESS_TOKEN]
+            val currentRefreshToken = preferences[REFRESH_TOKEN]
+            if(currentAccessToken !=null && currentRefreshToken!=null) {
+               return true
+            }
+            else{
+               return false
+            }
+        } catch (e: Exception) {
+           return false
+        }
+    }
+
+    suspend fun clearTokens() {
+        dataStore.edit { preferences ->
+            preferences.remove(ACCESS_TOKEN)
+            preferences.remove(REFRESH_TOKEN)
+        }
+    }
+
 
 }

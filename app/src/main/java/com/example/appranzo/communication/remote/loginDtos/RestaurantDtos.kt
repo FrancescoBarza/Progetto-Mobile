@@ -1,5 +1,6 @@
 package com.example.appranzo.communication.remote.loginDtos
 
+import com.example.appranzo.data.models.Place
 import kotlinx.serialization.SerialName
 import kotlinx. serialization. Serializable;
 
@@ -21,7 +22,21 @@ data class PlaceDto(
     val photoUrl: String? = null,
     val categoryId: Int,
     val distanceFromUser: Double? = null
-)
+){
+    fun toDto(): Place {
+        return Place(
+            id,
+            name,
+            description,
+            address,
+            city,
+            photoUrl,
+            "",
+            1.0,
+            distanceFromUser
+        )
+    }
+}
 
 @Serializable
 data class ReverseGeocodingResponse(
@@ -41,4 +56,9 @@ data class ResearchDto(
     val latitude: Double?,
     val longitude: Double?,
     val researchInput: String
+)
+
+@Serializable
+data class RequestId(
+    val id:Int
 )

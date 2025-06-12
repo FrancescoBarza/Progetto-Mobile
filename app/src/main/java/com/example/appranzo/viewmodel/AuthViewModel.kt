@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
@@ -65,12 +66,9 @@ class AuthViewModel(private val restApiClient: RestApiClient,private val tokensR
                     val result = restApiClient.login(username, password)
                     when (result) {
                         is AuthResults.TokenDtos -> {
+                            restApiClient.updateTokens(result.accessToken,result.refreshToken)
                             addTokens(result.accessToken,result.refreshToken)
-                            withContext(Dispatchers.Main){
-                                onSuccess()
-                            }
-                            _state.update { it.copy(error = result.refreshToken) }
-
+                            onSuccess()
                         }
 
                         is AuthResults.ErrorLoginResponseDto -> {
@@ -111,7 +109,7 @@ class AuthViewModel(private val restApiClient: RestApiClient,private val tokensR
         }
     }
 
-    fun register(onSuccess: () -> Unit, ctx: Context) {
+    fun register(onSuccess: () -> Unit, onFailureDisplay: (message: String) -> Unit, ctx: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val currentValues = _state.value
             val username = currentValues.username
@@ -154,9 +152,9 @@ class AuthViewModel(private val restApiClient: RestApiClient,private val tokensR
 
                     when (result) {
                         is AuthResults.TokenDtos -> {
+                            restApiClient.updateTokens(result.accessToken,result.refreshToken)
                             addTokens(result.accessToken,result.refreshToken)
                             onSuccess()
-                            _state.update { it.copy(error = result.refreshToken) }
                         }
 
                         is AuthResults.ErrorRegistrationResponseDto -> {
@@ -198,5 +196,30 @@ class AuthViewModel(private val restApiClient: RestApiClient,private val tokensR
         viewModelScope.launch {
             tokensRepository.changeTokens(accessToken, refreshToken)
         }
+    }
+
+    suspend fun automaticLogin():Boolean{
+        if(tokensRepository.hasTokens()){
+            restApiClient.updateTokens(tokensRepository.accessToken.first(),tokensRepository.refreshToken.first())
+            if(restApiClient.canILog()){
+                return true
+            }
+            else{
+                try {
+                    when(val refreshResults = restApiClient.refresh()){
+                        is AuthResults.TokenDtos -> {
+                            tokensRepository.changeTokens(refreshResults.accessToken,refreshResults.refreshToken)
+                            return true
+                        }
+                        else ->return false
+                    }
+                }
+                catch (e:Exception){
+                    return false
+                }
+
+            }
+        }
+        return false
     }
 }

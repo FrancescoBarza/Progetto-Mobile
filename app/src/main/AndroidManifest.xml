@@ -25,7 +25,7 @@
         android:theme="@style/Theme.APPranzo"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:label="APPranzo"
             android:theme="@style/Theme.APPranzo">
@@ -35,6 +35,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="APPranzo"
+            android:theme="@style/Theme.APPranzo">
+        </activity>
+
+        <activity
+            android:name=".PlaceDetailActivity"
+            android:exported="false"
+            android:label="APPranzo"
+            android:theme="@style/Theme.APPranzo">
+        </activity>
+
     </application>
 
 </manifest>

@@ -13,6 +13,7 @@ import com.example.appranzo.ui.screens.ThemeViewModel
 import com.example.appranzo.viewmodel.AuthViewModel
 import com.example.appranzo.viewmodel.BadgeRoadViewModel
 import com.example.appranzo.viewmodel.FriendsViewModel
+import com.example.appranzo.viewmodel.PlaceDetailViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -49,5 +50,7 @@ val appModule = module {
     viewModel { AuthViewModel(get(),get()) }
     viewModel { BadgeRoadViewModel() }
     viewModel { FriendsViewModel() }
+    viewModel { PlaceDetailViewModel(get())}
+
 
 }

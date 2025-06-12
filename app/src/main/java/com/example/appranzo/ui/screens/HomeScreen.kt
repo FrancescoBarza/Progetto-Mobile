@@ -1,5 +1,7 @@
 package com.example.appranzo.ui.screens
 
+import android.content.Context
+import android.content.Intent
 import android.text.style.BackgroundColorSpan
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
@@ -46,20 +49,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.appranzo.PlaceDetailActivity
 import com.example.appranzo.R
 import com.example.appranzo.data.models.Category
 import com.example.appranzo.data.models.Place
 import com.example.appranzo.ui.navigation.Routes
 
 
-fun onClickPlace(place: Place){
+fun onClickPlace(place: Place,ctx:Context){
+    val intent = Intent(ctx, PlaceDetailActivity::class.java)
+    intent.putExtra("EXTRA_PRODUCT_ID", place.id)
+    ctx.startActivity(intent)
 }
 
 
 @Composable
 fun HomeScreen(){
+    val ctx = LocalContext.current
     val place = Place(1,"rest","Top","Via Bella","Ortona",null,"pizza",3.0,200.0)
     LazyColumn( modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 16.dp)
@@ -75,7 +84,7 @@ fun HomeScreen(){
         item {
             MainTitle("Alta Valutazione", modifier = Modifier.padding(horizontal = 16.dp))
             Spacer(modifier = Modifier.height(8.dp))
-            HighlitedRestaurants(listOf(place,place,place,place),{place->onClickPlace(place)})
+            HighlitedRestaurants(listOf(place,place,place,place),{place->onClickPlace(place,ctx)})
         }
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
@@ -90,7 +99,7 @@ fun HomeScreen(){
             }
             Spacer(modifier = Modifier.height(8.dp))
             for(place in listOf(place,place,place,place)){
-                PlaceWithDescription(place, modifier = Modifier , {placeB->onClickPlace(placeB)} )
+                PlaceWithDescription(place, modifier = Modifier , {placeB->onClickPlace(placeB,ctx)} )
                 Spacer(modifier = Modifier.height(15.dp))
             }
         }
@@ -205,6 +214,7 @@ fun SecondaryTitle(title: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun PlaceWithDescription(place:Place,modifier: Modifier=Modifier, OnClickPlace:(Place)->Unit){
+    val ctx = LocalContext.current
     Card(modifier = modifier.fillMaxWidth().clickable { OnClickPlace(place) }) {
         Row(modifier = Modifier.padding(12.dp)) {
             AsyncImage(

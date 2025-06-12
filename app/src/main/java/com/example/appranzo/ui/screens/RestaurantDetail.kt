@@ -23,7 +23,13 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.StarHalf
 import androidx.compose.material.icons.filled.StarRate
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.appranzo.data.models.Place
+import com.example.appranzo.viewmodel.RestaurantDetailActualState
+import com.example.appranzo.viewmodel.PlaceDetailViewModel
 
 // -------------------
 // Data classes
@@ -41,132 +47,144 @@ data class Review(
 // ----------------------------------------------------
 @Composable
 fun RestaurantDetailContent(
-    restaurant: Place,
-    innerPadding: PaddingValues
+    restaurantId: Int,
+    viewModel: PlaceDetailViewModel,
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-    ) {
-        // Immagine di copertina (qui usiamo un'icona di placeholder)
-        item {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .background(Color.Gray),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Place,
-                    contentDescription = "Placeholder Immagine",
-                    tint = Color.White,
-                    modifier = Modifier.size(64.dp)
-                )
+    LaunchedEffect(restaurantId) {
+        viewModel.loadRestaurantById(restaurantId)
+    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    when (val actualState = state) {
+        is RestaurantDetailActualState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
         }
 
-        // Nome, cucina, indirizzo e distanza
-        item {
-            Column(
+        is RestaurantDetailActualState.Success -> {
+            val restaurant = actualState.restaurant
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                    .fillMaxSize()
+                    .padding()
             ) {
-                Text(
-                    text = restaurant.name,
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = "${restaurant.categoryName} • ${restaurant.address}",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = String.format("%.1f km", restaurant.distanceFromUser),
-                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.primary)
-                )
-            }
-        }
-
-        // Valutazione media e stelle
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Text(
-                    text = "Valutazione media",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = String.format("%.1f", restaurant.rating),
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    val filledStars = restaurant.rating.toInt()
-                    val halfStar = ((restaurant.rating - filledStars) >= 0.5)
-                    for (i in 1..5) {
-                        val icon = when {
-                            i <= filledStars -> Icons.Default.StarRate // qui potresti cambiare con ic_star_filled
-                            i == filledStars + 1 && halfStar -> Icons.Default.StarHalf // placeholder mezza stella
-                            else -> Icons.Default.StarBorder // placeholder stella vuota
-                        }
+                item {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .background(Color.Gray),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Icon(
-                            imageVector = icon,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.size(24.dp)
+                            imageVector = Icons.Default.Place,
+                            contentDescription = "Placeholder Immagine",
+                            tint = Color.White,
+                            modifier = Modifier.size(64.dp)
                         )
                     }
                 }
-            }
-        }
 
-        // Distribuzione punteggi (grafico a barre)
-        item {
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text = "Distribuzione voti",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Spacer(Modifier.height(8.dp))
-
-            val maxCount = 5  //TODO numero recensioni con tot stelle
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                (5 downTo 1).forEach { starValue ->
-                    val count = 5
-                    RatingBarRow(
-                        star = starValue,
-                        count = count,
-                        maxCount = 10,
-                        barHeight = 12.dp,
-                        barColor = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(Modifier.height(4.dp))
+                // Nome, cucina, indirizzo e distanza
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = restaurant.name,
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            text = "${restaurant.categoryName} • ${restaurant.address}",
+                            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            text = String.format("%.1f km", restaurant.distanceFromUser),
+                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.primary)
+                        )
+                    }
                 }
-            }
-        }
 
-        // Sezione “Recensioni”
-        item {
-            Spacer(Modifier.height(24.dp))
-            Text(
-                text = "Recensioni",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Spacer(Modifier.height(8.dp))
-        }
+                // Valutazione media e stelle
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text(
+                            text = "Valutazione media",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = String.format("%.1f", restaurant.rating),
+                                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            val filledStars = restaurant.rating.toInt()
+                            val halfStar = ((restaurant.rating - filledStars) >= 0.5)
+                            for (i in 1..5) {
+                                val icon = when {
+                                    i <= filledStars -> Icons.Default.StarRate // qui potresti cambiare con ic_star_filled
+                                    i == filledStars + 1 && halfStar -> Icons.Default.StarHalf // placeholder mezza stella
+                                    else -> Icons.Default.StarBorder // placeholder stella vuota
+                                }
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
+                }
 
-        // Elenco delle recensioni
-      /*  items(restaurant.reviews) { review ->
+                // Distribuzione punteggi (grafico a barre)
+                item {
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        text = "Distribuzione voti",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Spacer(Modifier.height(8.dp))
+
+                    val maxCount = 5  //TODO numero recensioni con tot stelle
+                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        (5 downTo 1).forEach { starValue ->
+                            val count = 5
+                            RatingBarRow(
+                                star = starValue,
+                                count = count,
+                                maxCount = 10,
+                                barHeight = 12.dp,
+                                barColor = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.height(4.dp))
+                        }
+                    }
+                }
+
+                // Sezione “Recensioni”
+                item {
+                    Spacer(Modifier.height(24.dp))
+                    Text(
+                        text = "Recensioni",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
+
+                // Elenco delle recensioni
+                /*  items(restaurant.reviews) { review ->
             ReviewItem(review)
             Divider(modifier = Modifier.padding(vertical = 8.dp))
         }
@@ -190,10 +208,17 @@ fun RestaurantDetailContent(
             Spacer(Modifier.height(16.dp))
         } */
 
-        // 8) Spazio finale per non coprire il contenuto
-        item {
-            Spacer(Modifier.height(80.dp))
+                // 8) Spazio finale per non coprire il contenuto
+                item {
+                    Spacer(Modifier.height(80.dp))
+                }
+            }
         }
+
+        is RestaurantDetailActualState.Error ->
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = "Impossible to load this restaurant")
+            }
     }
 }
 

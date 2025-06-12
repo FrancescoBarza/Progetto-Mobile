@@ -1,6 +1,9 @@
 
 package com.example.appranzo.ui.screens
 
+import android.content.Context
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -9,9 +12,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.appranzo.MainActivity
 import com.example.appranzo.ui.navigation.Routes
 import com.example.appranzo.viewmodel.AuthViewModel
 import org.koin.androidx.compose.koinViewModel
+
+fun onSuccesfullRegistration(navController: NavController,ctx: Context){
+    val intent = Intent(ctx, MainActivity::class.java)
+    ctx.startActivity(intent)
+}
+fun toastError(str: String) {
+    Log.e("RegistrationScreen",str)
+}
+
+
+
 
 @Composable
 fun RegisterScreen(
@@ -81,7 +96,7 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                viewModel.register({println("ciao")},ctx)
+                viewModel.register({onSuccesfullRegistration(navController,ctx)},{message->toastError(message)},ctx)
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = !state.isLoading,

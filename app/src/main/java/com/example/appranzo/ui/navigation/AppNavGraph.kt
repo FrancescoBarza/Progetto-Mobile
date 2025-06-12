@@ -26,18 +26,8 @@ import org.koin.androidx.compose.koinViewModel
 fun AppNavGraph(navController: NavHostController) {
     NavHost(
         navController    = navController,
-        startDestination = LOGIN
+        startDestination = MAIN
     ) {
-        // 1) Login → LoginScreen gestisce internamente navController.navigate(MAIN)
-        composable(LOGIN) {
-            LoginScreen(navController = navController)
-        }
-
-        // 2) Register → RegisterScreen gestisce internamente navController.navigate(MAIN)
-        composable(REGISTER) {
-            RegisterScreen(navController = navController)
-        }
-
         // 3) Main container (TopBar + BottomNav con 5 tab)
         composable(MAIN) {
             MainScreen(navController = navController)
