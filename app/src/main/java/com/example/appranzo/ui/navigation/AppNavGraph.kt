@@ -16,6 +16,7 @@ import com.example.appranzo.ui.navigation.Routes.MAIN
 import com.example.appranzo.ui.navigation.Routes.REGISTER
 import com.example.appranzo.ui.navigation.Routes.LOGIN
 import com.example.appranzo.ui.navigation.Routes.SETTINGS
+import com.example.appranzo.ui.screens.ProfileScreen
 import com.example.appranzo.ui.screens.SettingsScreen
 import com.example.appranzo.ui.screens.ThemeScreen
 import com.example.appranzo.ui.screens.ThemeState
@@ -32,6 +33,11 @@ fun AppNavGraph(navController: NavHostController) {
         composable(MAIN) {
             MainScreen(navController = navController)
         }
+
+        composable(Routes.PROFILE) {
+            ProfileScreen(navController)
+        }
+
         composable(Routes.SETTINGS) {
             SettingsScreen(navController = navController)
         }
