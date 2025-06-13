@@ -16,3 +16,10 @@ data class RegistrationRequestsDtos(
     val photoUrl: String?
 )
 
+@Serializable
+data class UserDto(
+    val id: Int,
+    val username: String,
+    val photoUrl: String?
+)
+

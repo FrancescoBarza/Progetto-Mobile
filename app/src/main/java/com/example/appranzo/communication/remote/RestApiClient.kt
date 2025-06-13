@@ -14,10 +14,12 @@ import com.example.appranzo.communication.remote.loginDtos.PlaceDto
 import com.example.appranzo.communication.remote.loginDtos.RegistrationErrorReason
 import com.example.appranzo.communication.remote.loginDtos.RegistrationRequestsDtos
 import com.example.appranzo.communication.remote.loginDtos.RequestId
+import com.example.appranzo.communication.remote.loginDtos.UserDto
 import com.example.appranzo.data.models.Place
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -26,6 +28,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 import io.ktor.http.*
+import it.unibo.appranzo.communication.dtos.friendship.FriendshipRequestDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -118,6 +121,92 @@ class RestApiClient(val httpClient: HttpClient){
             return null
         }
     }
+
+    suspend fun getAllFriends():List<UserDto>{
+        try {
+            val url = "$REST_API_ADDRESS/friends"
+            val result = httpClient.get(url) {
+                bearerAuth(accessToken)
+            }
+            return if (result.status==HttpStatusCode.OK){
+                Json.decodeFromString<List<UserDto>>(result.bodyAsText())
+            } else emptyList()
+        }
+        catch (e:Exception){
+            return emptyList()
+        }
+    }
+
+    suspend fun removeAFriend(userDto: UserDto):Boolean{
+        return try {
+            val url = "$REST_API_ADDRESS/friends/removeAFriend/${userDto.id}"
+            val result = httpClient.delete(url) {
+                bearerAuth(accessToken)
+            }
+            result.status==HttpStatusCode.OK
+        } catch (e:Exception){
+            false
+        }
+    }
+
+    suspend fun sendFriendshipRequest(userDto: UserDto):Boolean{
+        return try {
+            val url = "$REST_API_ADDRESS/friends/sendRequest"
+            val result = httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(userDto)
+            }
+            result.status==HttpStatusCode.OK
+        } catch (e:Exception){
+            false
+        }
+    }
+
+    suspend fun rejectFriendshipRequest(friendshipRequestDto: FriendshipRequestDto):Boolean{
+        return try {
+            val url = "$REST_API_ADDRESS/friends/rejectRequest"
+            val result = httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(friendshipRequestDto)
+            }
+            result.status==HttpStatusCode.OK
+        } catch (e:Exception){
+            false
+        }
+    }
+
+    suspend fun acceptFriendshipRequest(friendshipRequestDto: FriendshipRequestDto):Boolean{
+        return try {
+            val url = "$REST_API_ADDRESS/friends/acceptRequest"
+            val result = httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(friendshipRequestDto)
+            }
+            result.status==HttpStatusCode.OK
+        } catch (e:Exception){
+            false
+        }
+    }
+
+
+
+    suspend fun getPendingRequests():List<FriendshipRequestDto>{
+        return try {
+            val url = "$REST_API_ADDRESS/friends/pendingRequests"
+            val result = httpClient.get(url) {
+                bearerAuth(accessToken)
+            }
+            if (result.status==HttpStatusCode.OK){
+                Json.decodeFromString<List<FriendshipRequestDto>>(result.bodyAsText())
+            } else emptyList()
+        } catch (e:Exception){
+            emptyList()
+        }
+    }
+
 
 
     suspend fun refresh():AuthResults {
