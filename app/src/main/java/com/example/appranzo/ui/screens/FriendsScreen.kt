@@ -44,7 +44,7 @@ fun FriendsScreen(
                 OutlinedTextField(
                     value = codeInput,
                     onValueChange = viewModel::onCodeChange,
-                    label = { Text("Codice univoco") },
+                    label = { Text("Username") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )

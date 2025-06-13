@@ -14,6 +14,8 @@ object Routes {
 
     // top‐bar
     const val PROFILE  = "profile"
+    const val PROFILE_DETAILS  = "profile_details"
+
 
     const val SETTINGS = "settings"
     const val SETTINGS_THEME = "settings_theme"
