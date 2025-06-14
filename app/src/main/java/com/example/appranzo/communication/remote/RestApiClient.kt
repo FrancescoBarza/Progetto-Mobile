@@ -6,6 +6,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.provider.ContactsContract.CommonDataKinds.Email
 import android.provider.Settings
+import android.util.Base64
+import com.example.appranzo.communication.remote.friendship.FriendshipRequestDto
 import io.ktor.http.ContentType
 import com.example.appranzo.communication.remote.loginDtos.AuthResults
 import com.example.appranzo.communication.remote.loginDtos.LoginErrorReason
@@ -28,10 +30,12 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 import io.ktor.http.*
-import it.unibo.appranzo.communication.dtos.friendship.FriendshipRequestDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.RequestBody
 
 
@@ -101,6 +105,24 @@ class RestApiClient(val httpClient: HttpClient){
         }
         catch (e:Exception){
             return false
+        }
+    }
+
+    fun getCurrentUserFromToken(): UserDto? {
+        val token = accessToken.takeIf { it.isNotBlank() } ?: return null
+        val parts = token.split(".")
+        if (parts.size != 3) return null
+
+        return try {
+            val payload = String(Base64.decode(parts[1], Base64.URL_SAFE))
+            val obj = Json.parseToJsonElement(payload).jsonObject
+            val id       = obj["id"]?.jsonPrimitive?.int
+            val username = obj["username"]?.jsonPrimitive?.content
+            if (id != null && username != null) {
+                UserDto(id = id, username = username, photoUrl = null  )
+            } else null
+        } catch (e: Exception) {
+            null
         }
     }
 

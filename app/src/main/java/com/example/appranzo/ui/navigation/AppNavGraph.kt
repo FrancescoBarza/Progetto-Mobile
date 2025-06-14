@@ -16,11 +16,13 @@ import com.example.appranzo.ui.navigation.Routes.MAIN
 import com.example.appranzo.ui.navigation.Routes.REGISTER
 import com.example.appranzo.ui.navigation.Routes.LOGIN
 import com.example.appranzo.ui.navigation.Routes.SETTINGS
+import com.example.appranzo.ui.screens.ProfileDetailScreen
 import com.example.appranzo.ui.screens.ProfileScreen
 import com.example.appranzo.ui.screens.SettingsScreen
 import com.example.appranzo.ui.screens.ThemeScreen
 import com.example.appranzo.ui.screens.ThemeState
 import com.example.appranzo.ui.screens.ThemeViewModel
+import com.example.appranzo.viewmodel.ProfileDetailViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -37,8 +39,11 @@ fun AppNavGraph(navController: NavHostController) {
         composable(Routes.PROFILE) {
             ProfileScreen(navController)
         }
+        composable(Routes.PROFILE_DETAILS) {
+            ProfileDetailScreen(navController)
+        }
 
-        composable(Routes.SETTINGS) {
+        composable(SETTINGS) {
             SettingsScreen(navController = navController)
         }
 

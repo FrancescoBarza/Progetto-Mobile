@@ -1,4 +1,4 @@
-package it.unibo.appranzo.communication.dtos.friendship
+package com.example.appranzo.communication.remote.friendship
 
 import kotlinx.serialization.Serializable
 

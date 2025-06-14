@@ -45,7 +45,7 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-
+                        navController.navigate(Routes.PROFILE_DETAILS)
                     }
             )
             Divider()
