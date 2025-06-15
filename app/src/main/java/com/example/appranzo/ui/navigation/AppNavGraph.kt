@@ -16,6 +16,7 @@ import com.example.appranzo.ui.navigation.Routes.MAIN
 import com.example.appranzo.ui.navigation.Routes.REGISTER
 import com.example.appranzo.ui.navigation.Routes.LOGIN
 import com.example.appranzo.ui.navigation.Routes.SETTINGS
+import com.example.appranzo.ui.screens.FavoritesScreen
 import com.example.appranzo.ui.screens.ProfileDetailScreen
 import com.example.appranzo.ui.screens.ProfileScreen
 import com.example.appranzo.ui.screens.SettingsScreen

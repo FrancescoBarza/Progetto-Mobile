@@ -10,6 +10,7 @@ import android.util.Base64
 import com.example.appranzo.communication.remote.friendship.FriendshipRequestDto
 import io.ktor.http.ContentType
 import com.example.appranzo.communication.remote.loginDtos.AuthResults
+import com.example.appranzo.communication.remote.loginDtos.FavoriteRequest
 import com.example.appranzo.communication.remote.loginDtos.LoginErrorReason
 import com.example.appranzo.communication.remote.loginDtos.LoginRequestsDtos
 import com.example.appranzo.communication.remote.loginDtos.PlaceDto
@@ -25,6 +26,7 @@ import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -33,6 +35,7 @@ import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -108,23 +111,6 @@ class RestApiClient(val httpClient: HttpClient){
         }
     }
 
-    fun getCurrentUserFromToken(): UserDto? {
-        val token = accessToken.takeIf { it.isNotBlank() } ?: return null
-        val parts = token.split(".")
-        if (parts.size != 3) return null
-
-        return try {
-            val payload = String(Base64.decode(parts[1], Base64.URL_SAFE))
-            val obj = Json.parseToJsonElement(payload).jsonObject
-            val id       = obj["id"]?.jsonPrimitive?.int
-            val username = obj["username"]?.jsonPrimitive?.content
-            if (id != null && username != null) {
-                UserDto(id = id, username = username, photoUrl = null  )
-            } else null
-        } catch (e: Exception) {
-            null
-        }
-    }
 
     suspend fun placeById(id:Int): Place? {
         try {
@@ -144,6 +130,47 @@ class RestApiClient(val httpClient: HttpClient){
         }
     }
 
+    // Aggiunge il place ai preferiti dell’utente corrente
+    suspend fun addFavorite(placeId: Int): Boolean {
+        val url = "$REST_API_ADDRESS/favorites/add"
+        return try {
+            val response: HttpResponse = httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(FavoriteRequest(placeId))
+            }
+            response.status == HttpStatusCode.OK
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    // Rimuove il place dai preferiti dell’utente corrente
+    suspend fun removeFavorite(placeId: Int): Boolean {
+        val url = "$REST_API_ADDRESS/favorites/remove"
+        return try {
+            val response: HttpResponse = httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(FavoriteRequest(placeId))
+            }
+            response.status == HttpStatusCode.OK
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    // (Opzionale) Recupera la lista di PlaceDto preferiti
+    suspend fun getFavorites(): List<PlaceDto> {
+        val url = "$REST_API_ADDRESS/favorites"
+        return try {
+            httpClient.post(url) {
+                bearerAuth(accessToken)
+            }.body()
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
     suspend fun getAllFriends():List<UserDto>{
         try {
             val url = "$REST_API_ADDRESS/friends"

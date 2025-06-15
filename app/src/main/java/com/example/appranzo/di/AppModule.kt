@@ -13,6 +13,7 @@ import com.example.appranzo.ui.screens.ProfileDetailScreen
 import com.example.appranzo.ui.screens.ThemeViewModel
 import com.example.appranzo.viewmodel.AuthViewModel
 import com.example.appranzo.viewmodel.BadgeRoadViewModel
+import com.example.appranzo.viewmodel.FavouritesViewModel
 import com.example.appranzo.viewmodel.FriendsViewModel
 import com.example.appranzo.viewmodel.PlaceDetailViewModel
 import com.example.appranzo.viewmodel.ProfileDetailViewModel
@@ -50,11 +51,16 @@ val appModule = module {
     single { ThemeRepository(dataStore = get()) }
 
     viewModel { ThemeViewModel(repository = get()) }
+
     viewModel { AuthViewModel(get(),get()) }
+    viewModel { FavouritesViewModel(get()) }
+
     viewModel { ProfileViewModel(get(),get()) }
+    viewModel { ProfileDetailViewModel(get()) }
+
     viewModel { BadgeRoadViewModel() }
+
     viewModel { FriendsViewModel(api = get()) }
     viewModel { PlaceDetailViewModel(get())}
-    viewModel { ProfileDetailViewModel(api = get()) }
 
 }

@@ -62,3 +62,6 @@ data class ResearchDto(
 data class RequestId(
     val id:Int
 )
+
+@Serializable
+data class FavoriteRequest(val placeId: Int)

@@ -12,7 +12,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.appranzo.ui.navigation.bottomNavItems
 import com.example.appranzo.ui.screens.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,7 +73,7 @@ fun MainScreen(navController: NavController) {
             modifier         = Modifier.padding(innerPadding)
         ) {
             composable(Routes.TAB_HOME)      { HomeScreen() }
-            composable(Routes.TAB_FAVORITES) {  }
+            composable(Routes.TAB_FAVORITES) { FavoritesScreen() }
             composable(Routes.TAB_MAP)       { MapScreen() }
             composable(Routes.TAB_FRIENDS)   { FriendsScreen() }
             composable(Routes.TAB_BADGES)    { BadgeRoadScreen() }
