@@ -1,5 +1,7 @@
 package com.example.appranzo.ui.screens
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -7,15 +9,28 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.appranzo.LoginActivity
+import com.example.appranzo.MainActivity
 import com.example.appranzo.ui.navigation.Routes
+import com.example.appranzo.viewmodel.AuthViewModel
+import com.example.appranzo.viewmodel.ProfileViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: ProfileViewModel = koinViewModel()
 ) {
+    val ctx = LocalContext.current
+    fun onSuccesfullLogout(navController: NavController,ctx: Context){
+        val intent = Intent(ctx, LoginActivity::class.java)
+        ctx.startActivity(intent)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -79,6 +94,7 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
+                        viewModel.logOut(onSuccessfullLogout = {onSuccesfullLogout(navController, ctx = ctx)})
                         navController.navigate(Routes.LOGIN) {
                             popUpTo(Routes.MAIN) { inclusive = true }
                         }

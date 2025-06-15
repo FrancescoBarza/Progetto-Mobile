@@ -276,6 +276,11 @@ class RestApiClient(val httpClient: HttpClient){
         }
     }
 
+    suspend fun logout(){
+        accessToken=""
+        refreshToken=""
+    }
+
     fun updateTokens(newAccessToken: String, newRefreshToken: String) {
         this.accessToken = newAccessToken
         this.refreshToken = newRefreshToken

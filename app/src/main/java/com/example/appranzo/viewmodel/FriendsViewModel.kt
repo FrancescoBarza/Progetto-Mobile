@@ -90,7 +90,7 @@ class FriendsViewModel(private val api: RestApiClient) : ViewModel() {
         viewModelScope.launch {
             _uiState.value = UiState.LOADING
             // Crea un UserDto fittizio come richiesto dall'API, l'ID non è rilevante qui.
-            val userToSendRequest = UserDto(id = 0, username = _usernameInput.value, photoUrl = null)
+            val userToSendRequest = UserDto(id = 1, username = _usernameInput.value, photoUrl = null)
             val success = api.sendFriendshipRequest(userToSendRequest)
 
             if (success) {
