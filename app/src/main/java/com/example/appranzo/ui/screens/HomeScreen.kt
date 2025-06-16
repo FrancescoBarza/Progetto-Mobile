@@ -148,8 +148,8 @@ fun CategoryRow(modifier: Modifier = Modifier, categories: List<Category>) {
                         .size(72.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop,
-                    error = painterResource(id = R.drawable.restaurantplaceholder),
-                    placeholder = painterResource(id = R.drawable.restaurantplaceholder)
+                    error = painterResource(id = R.drawable.pizzeria),
+                    placeholder = painterResource(id = R.drawable.pizzeria)
                 )
                 Text(
                     "${c.name.capitalize()}",
