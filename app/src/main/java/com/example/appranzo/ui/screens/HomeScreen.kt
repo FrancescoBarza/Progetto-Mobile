@@ -2,6 +2,7 @@ package com.example.appranzo.ui.screens
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,11 +52,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.appranzo.PlaceDetailActivity
 import com.example.appranzo.R
 import com.example.appranzo.data.models.Category
 import com.example.appranzo.data.models.Place
+import com.example.appranzo.ui.navigation.BottomNavScreen
+import com.example.appranzo.ui.navigation.Routes
 
 fun onClickPlace(place: Place, ctx: Context) {
     val intent = Intent(ctx, PlaceDetailActivity::class.java)
@@ -63,7 +68,7 @@ fun onClickPlace(place: Place, ctx: Context) {
 }
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val ctx = LocalContext.current
     val place = Place(1, "rest", "Top", "Via Bella", "Ortona", null, "pizza", 3.0, 200.0)
 
@@ -71,7 +76,12 @@ fun HomeScreen() {
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        item { SearchBar(modifier = Modifier.padding(horizontal = 16.dp)) }
+        item {
+            SearchBar(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onClick = { navController.navigate(Routes.SEARCH) }
+            )
+        }
         item { Spacer(modifier = Modifier.height(24.dp)) }
         item {
             CategoryRow(
@@ -115,18 +125,28 @@ fun HomeScreen() {
 }
 
 @Composable
-fun SearchBar(modifier: Modifier) {
-    var text by remember { mutableStateOf("") }
-    OutlinedTextField(
-        value = text,
-        onValueChange = { newText -> text = newText },
-        label = { Text("Cerca") },
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(35.dp),
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "Ricerca")
-        }
-    )
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        contentAlignment = Alignment.CenterStart,
+
+    ) {
+        Text(
+            "Cerca",
+            style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray)
+        )
+    }
 }
 
 @Composable

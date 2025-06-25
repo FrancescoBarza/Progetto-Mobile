@@ -19,6 +19,7 @@ import com.example.appranzo.ui.navigation.Routes.SETTINGS
 import com.example.appranzo.ui.screens.FavoritesScreen
 import com.example.appranzo.ui.screens.ProfileDetailScreen
 import com.example.appranzo.ui.screens.ProfileScreen
+import com.example.appranzo.ui.screens.SearchScreen
 import com.example.appranzo.ui.screens.SettingsScreen
 import com.example.appranzo.ui.screens.ThemeScreen
 import com.example.appranzo.ui.screens.ThemeState
@@ -59,5 +60,8 @@ fun AppNavGraph(navController: NavHostController) {
                 onBack = {navController.popBackStack()}
             )
         }
+        composable(Routes.SEARCH) { SearchScreen(onBack = {navController.popBackStack()}) }
+
+        
     }
 }

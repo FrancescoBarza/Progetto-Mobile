@@ -19,4 +19,7 @@ object Routes {
 
     const val SETTINGS = "settings"
     const val SETTINGS_THEME = "settings_theme"
+
+    //home
+    const val SEARCH = "search"
 }

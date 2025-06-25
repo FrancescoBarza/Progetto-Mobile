@@ -72,7 +72,7 @@ fun MainScreen(navController: NavController) {
             startDestination = Routes.TAB_HOME,
             modifier         = Modifier.padding(innerPadding)
         ) {
-            composable(Routes.TAB_HOME)      { HomeScreen() }
+            composable(Routes.TAB_HOME)      { HomeScreen(navController) }
             composable(Routes.TAB_FAVORITES) { FavoritesScreen() }
             composable(Routes.TAB_MAP)       { MapScreen() }
             composable(Routes.TAB_FRIENDS)   { FriendsScreen() }
