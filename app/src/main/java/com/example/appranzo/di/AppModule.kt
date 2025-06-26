@@ -18,6 +18,7 @@ import com.example.appranzo.viewmodel.FriendsViewModel
 import com.example.appranzo.viewmodel.PlaceDetailViewModel
 import com.example.appranzo.viewmodel.ProfileDetailViewModel
 import com.example.appranzo.viewmodel.ProfileViewModel
+import com.example.appranzo.viewmodel.SearchViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -61,6 +62,8 @@ val appModule = module {
     viewModel { BadgeRoadViewModel() }
 
     viewModel { FriendsViewModel(api = get()) }
+
+    viewModel { SearchViewModel(get()) }
     viewModel { PlaceDetailViewModel(get())}
 
 }

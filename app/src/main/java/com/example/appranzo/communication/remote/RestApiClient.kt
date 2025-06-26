@@ -8,6 +8,7 @@ import android.provider.ContactsContract.CommonDataKinds.Email
 import android.provider.Settings
 import android.util.Base64
 import com.example.appranzo.communication.remote.friendship.FriendshipRequestDto
+
 import io.ktor.http.ContentType
 import com.example.appranzo.communication.remote.loginDtos.AuthResults
 import com.example.appranzo.communication.remote.loginDtos.FavoriteRequest
@@ -159,6 +160,9 @@ class RestApiClient(val httpClient: HttpClient){
             false
         }
     }
+
+
+
 
     // (Opzionale) Recupera la lista di PlaceDto preferiti
     suspend fun getFavorites(): List<PlaceDto> {
