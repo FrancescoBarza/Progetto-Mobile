@@ -11,6 +11,7 @@ import com.example.appranzo.communication.remote.friendship.FriendshipRequestDto
 
 import io.ktor.http.ContentType
 import com.example.appranzo.communication.remote.loginDtos.AuthResults
+import com.example.appranzo.communication.remote.loginDtos.CategoryDto
 import com.example.appranzo.communication.remote.loginDtos.FavoriteRequest
 import com.example.appranzo.communication.remote.loginDtos.LoginErrorReason
 import com.example.appranzo.communication.remote.loginDtos.LoginRequestsDtos
@@ -18,7 +19,9 @@ import com.example.appranzo.communication.remote.loginDtos.PlaceDto
 import com.example.appranzo.communication.remote.loginDtos.RegistrationErrorReason
 import com.example.appranzo.communication.remote.loginDtos.RegistrationRequestsDtos
 import com.example.appranzo.communication.remote.loginDtos.RequestId
+import com.example.appranzo.communication.remote.loginDtos.ResearchDto
 import com.example.appranzo.communication.remote.loginDtos.UserDto
+import com.example.appranzo.data.models.Category
 import com.example.appranzo.data.models.Place
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -128,6 +131,56 @@ class RestApiClient(val httpClient: HttpClient){
         }
         catch (e:Exception){
             return null
+        }
+    }
+
+    suspend fun getCategories(): List<Category> {
+        val url = "$REST_API_ADDRESS/categories"
+        return try {
+            val dtoList: List<CategoryDto> = httpClient.get(url) {
+                bearerAuth(accessToken)
+            }.body()
+
+            // ORDINA PER ID e poi mappa
+            dtoList
+                .sortedBy { it.id }         // ← qui ordini per id crescente
+                .map { Category(id=it.id, name = it.name) }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+
+    suspend fun getPlacesByCategory(categoryId: Int): List<com.example.appranzo.data.models.Place> {
+        val url = "$REST_API_ADDRESS/places/category/$categoryId"
+        return try {
+            httpClient.get(url) {
+                bearerAuth(accessToken)
+            }.body<List<PlaceDto>>()
+                .map { it.toDto() }
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun searchPlaces(query: String): List<Place> {
+        val url = "$REST_API_ADDRESS/places/search"
+        // nel backend questo endpoint si aspetta un ResearchDto
+        val bodyDto = ResearchDto(
+            latitude        = null,
+            longitude       = null,
+            researchInput   = query
+        )
+        return try {
+            httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(bodyDto)
+            }
+                .body<List<PlaceDto>>()       // ricevi List<PlaceDto>
+                .map { it.toDto() }            // mappali in Place (tuo modello UI)
+        } catch (_: Exception) {
+            emptyList()
         }
     }
 

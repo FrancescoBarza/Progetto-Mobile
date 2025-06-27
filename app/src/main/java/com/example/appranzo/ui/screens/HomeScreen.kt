@@ -87,11 +87,11 @@ fun HomeScreen(navController: NavController) {
             CategoryRow(
                 modifier = Modifier,
                 listOf(
-                    Category("pizza"),
-                    Category("pizza"),
-                    Category("pizza"),
-                    Category("pizza"),
-                    Category("pizza")
+                    Category(1,"pizza"),
+                    Category(1,"pizza"),
+                    Category(1,"pizza"),
+                    Category(1,"pizza"),
+                    Category(1,"pizza")
                 )
             )
         }

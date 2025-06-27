@@ -21,6 +21,7 @@ import com.example.appranzo.ui.screens.ProfileDetailScreen
 import com.example.appranzo.ui.screens.ProfileScreen
 import com.example.appranzo.ui.screens.SearchScreen
 import com.example.appranzo.ui.screens.SettingsScreen
+import com.example.appranzo.ui.screens.SuccessSearchScreen
 import com.example.appranzo.ui.screens.ThemeScreen
 import com.example.appranzo.ui.screens.ThemeState
 import com.example.appranzo.ui.screens.ThemeViewModel
@@ -60,8 +61,15 @@ fun AppNavGraph(navController: NavHostController) {
                 onBack = {navController.popBackStack()}
             )
         }
-        composable(Routes.SEARCH) { SearchScreen(onBack = {navController.popBackStack()}) }
+        composable(Routes.SEARCH) { SearchScreen(navController) }
+        composable(Routes.SEARCH_RESULT + "/{categoryId}") { backStack ->
+            val catId = backStack.arguments?.getString("categoryId")?.toIntOrNull() ?: 0
+            SuccessSearchScreen(
+                categoryId = catId,
+                onBack = { navController.popBackStack() }
+            )
+        }
 
-        
+
     }
 }

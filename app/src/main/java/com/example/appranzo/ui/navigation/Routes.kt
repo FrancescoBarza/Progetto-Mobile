@@ -22,4 +22,5 @@ object Routes {
 
     //home
     const val SEARCH = "search"
+    const val SEARCH_RESULT = "search_result"
 }

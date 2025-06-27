@@ -1,10 +1,47 @@
 package com.example.appranzo.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.appranzo.communication.remote.RestApiClient
+import com.example.appranzo.data.models.Category
+import com.example.appranzo.data.models.Place
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
-
+@OptIn(FlowPreview::class)
 class SearchViewModel(
     private val restApiClient: RestApiClient
 ) : ViewModel() {
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query.asStateFlow()
+
+    private val _categories = MutableStateFlow<List<Category>>(emptyList())
+    val categories: StateFlow<List<Category>> = _categories.asStateFlow()
+
+    private val _results = MutableStateFlow<List<Place>>(emptyList())
+    val results: StateFlow<List<Place>> = _results.asStateFlow()
+
+    init {
+        // 1) carica le categorie (con id)
+        viewModelScope.launch {
+            _categories.value = restApiClient.getCategories()
+        }
+        // 2) debounce sulla query e ricerca
+        viewModelScope.launch {
+            _query
+                .debounce(300)
+                .distinctUntilChanged()
+                .flatMapLatest { term ->
+                    if (term.isBlank()) flowOf(emptyList())
+                    else flow { emit(restApiClient.searchPlaces(term)) }
+                }
+                .collect { list -> _results.value = list }
+        }
+    }
+
+    /** Chiamalo dalla UI ad ogni modifica di testo */
+    fun setQuery(text: String) {
+        _query.value = text
+    }
 }

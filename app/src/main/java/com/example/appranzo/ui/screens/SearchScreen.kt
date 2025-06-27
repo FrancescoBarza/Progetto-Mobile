@@ -1,117 +1,116 @@
 package com.example.appranzo.ui.screens
 
 import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.LocalDining
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.appranzo.PlaceDetailActivity
+import com.example.appranzo.data.models.Place
+import com.example.appranzo.data.models.Category
+import com.example.appranzo.ui.navigation.Routes
+import com.example.appranzo.ui.screens.onClickPlace
 import com.example.appranzo.viewmodel.SearchViewModel
 import org.koin.androidx.compose.koinViewModel
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel = koinViewModel(),
-    onBack: () -> Unit) {
-    var query by remember { mutableStateOf("") }
+    navController: NavController,
+    viewModel: SearchViewModel = koinViewModel()
+) {
+    val ctx = LocalContext.current
     val focusManager = LocalFocusManager.current
 
+    var query by remember { mutableStateOf("") }
+    val categories by viewModel.categories.collectAsState()
+    val results by viewModel.results.collectAsState()
 
     Scaffold(
         topBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth().padding(
-                        WindowInsets
-                            .systemBars
-                            .asPaddingValues()
-                        )
-                    .padding(8.dp)
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(WindowInsets.systemBars.asPaddingValues())
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = {
+                        query = it
+                        viewModel.setQuery(it)
+                    },
+                    placeholder = { Text("Cerca ristorante…") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    singleLine = true,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedTextField(
-                        value = query,
-                        onValueChange = { query = it },
-                        placeholder = { Text("Cerca ristorante…") },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Cerca"
-                            )
-                        },
-                        singleLine = true,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                    )
-
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier.size(48.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Chiudi ricerca"
-                        )
-                    }
+                        .weight(1f)
+                        .height(56.dp)
+                )
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.Default.Close, contentDescription = "Chiudi ricerca")
                 }
             }
         }
-    ) {innerPadding->
-
+    ) { innerPadding ->
         Box(
-            modifier = Modifier
+            Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        focusManager.clearFocus()
-                    })
-                }
+                .pointerInput(Unit) { detectTapGestures { focusManager.clearFocus() } }
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(3) { category ->
-                    ListItem(
-                        headlineContent = { Text("nome cat") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
+            if (query.isBlank()) {
+                LazyColumn(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(categories) { category ->
+                        ListItem(
+                            headlineContent = { Text(category.name) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    focusManager.clearFocus()
+                                    navController.navigate("${Routes.SEARCH_RESULT}/${category.id}")
+                                }
+                        )
+                        Divider()
+                    }
+                }
+            } else {
+                LazyColumn(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(results) { place ->
+                        ListItem(
+                            headlineContent = { Text(place.name) },
+                            supportingContent = { Text(place.description ?: "") },
+                            modifier = Modifier.clickable {
                                 focusManager.clearFocus()
+                                onClickPlace(place, ctx)
                             }
-                    )
-                    Divider()
+                        )
+                        Divider()
+                    }
                 }
             }
         }
