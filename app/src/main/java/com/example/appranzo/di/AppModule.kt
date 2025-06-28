@@ -16,6 +16,7 @@ import com.example.appranzo.viewmodel.BadgeRoadViewModel
 import com.example.appranzo.viewmodel.FavouritesViewModel
 import com.example.appranzo.viewmodel.FriendsViewModel
 import com.example.appranzo.viewmodel.PlaceDetailViewModel
+import com.example.appranzo.viewmodel.PlacesViewModel
 import com.example.appranzo.viewmodel.ProfileDetailViewModel
 import com.example.appranzo.viewmodel.ProfileViewModel
 import com.example.appranzo.viewmodel.SearchViewModel
@@ -24,6 +25,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -67,5 +69,6 @@ val appModule = module {
     viewModel { SearchViewModel(get()) }
     viewModel { SuccessSearchViewModel(get()) }
     viewModel { PlaceDetailViewModel(get())}
+    viewModel { PlacesViewModel(get(),androidApplication()) }
 
 }

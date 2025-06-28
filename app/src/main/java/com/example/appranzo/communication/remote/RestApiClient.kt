@@ -16,6 +16,7 @@ import com.example.appranzo.communication.remote.loginDtos.FavoriteRequest
 import com.example.appranzo.communication.remote.loginDtos.LoginErrorReason
 import com.example.appranzo.communication.remote.loginDtos.LoginRequestsDtos
 import com.example.appranzo.communication.remote.loginDtos.PlaceDto
+import com.example.appranzo.communication.remote.loginDtos.PositionDto
 import com.example.appranzo.communication.remote.loginDtos.RegistrationErrorReason
 import com.example.appranzo.communication.remote.loginDtos.RegistrationRequestsDtos
 import com.example.appranzo.communication.remote.loginDtos.RequestId
@@ -266,6 +267,25 @@ class RestApiClient(val httpClient: HttpClient){
             result.status==HttpStatusCode.OK
         } catch (e:Exception){
             false
+        }
+    }
+
+    suspend fun getNearRestaurants(latitude: Double, longitude: Double): List<Place> {
+        val url = "$REST_API_ADDRESS/places/nearPlaces"
+        val bodyDto = PositionDto(
+            latitude = latitude,
+            longitude = longitude
+        )
+        return try {
+            httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(bodyDto)
+            }
+                .body<List<PlaceDto>>()
+                .map { it.toDto() }
+        } catch (_: Exception) {
+            emptyList()
         }
     }
 

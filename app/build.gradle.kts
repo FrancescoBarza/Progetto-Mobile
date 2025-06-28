@@ -88,4 +88,5 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
     implementation("androidx.datastore:datastore-preferences:1.1.3")
     implementation("io.coil-kt:coil-compose:2.3.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
 }
