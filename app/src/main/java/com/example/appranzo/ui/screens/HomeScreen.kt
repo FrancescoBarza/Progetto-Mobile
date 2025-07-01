@@ -56,6 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.preference.PreferenceManager
 import coil.compose.AsyncImage
@@ -161,7 +162,8 @@ fun HomeScreen2(navController: NavController,isGpsEnabled: Boolean,viewModel: Pl
             Spacer(modifier = Modifier.height(8.dp))
             if (isGpsEnabled && homePageState.nearPlaces.isNotEmpty()) {
                 for (p in homePageState.nearPlaces) {
-                    PlaceWithDescription(p, modifier = Modifier) { pl ->
+                    val isFavourite = homePageState.favouritePlaces.any { it.id == p.id }
+                    PlaceWithDescription(p, modifier = Modifier,isFavourite,{viewModel.toggleFavourites(p)}) { pl ->
                         onClickPlace(pl, ctx)
                     }
                     Spacer(modifier = Modifier.height(15.dp))
@@ -329,10 +331,12 @@ fun SecondaryTitle(title: String, modifier: Modifier = Modifier) {
 fun PlaceWithDescription(
     place: Place,
     modifier: Modifier = Modifier,
+    isFavouriteOnCreation: Boolean,
+    OnTOggleFavourite: ()->Unit,
     OnClickPlace: (Place) -> Unit
 ) {
     val ctx = LocalContext.current
-    var isFavorite by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf(isFavouriteOnCreation) }
     Card(modifier = modifier.fillMaxWidth().clickable { OnClickPlace(place) }) {
         Row(modifier = Modifier.padding(12.dp)) {
             Box {
@@ -347,7 +351,7 @@ fun PlaceWithDescription(
                     placeholder = painterResource(id = R.drawable.restaurantplaceholder)
                 )
                 IconButton(
-                    onClick = { isFavorite = !isFavorite },
+                    onClick = { isFavorite = !isFavorite;OnTOggleFavourite() },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .offset(x = (-4).dp, y = 4.dp)

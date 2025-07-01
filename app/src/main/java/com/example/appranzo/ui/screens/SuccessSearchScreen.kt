@@ -36,6 +36,8 @@ fun SuccessSearchScreen(
     val places by viewModel.places.collectAsState()
     val ctx = LocalContext.current
 
+    val favouritePlaces by viewModel.favouritePlaces.collectAsState()
+
     LaunchedEffect(categoryId) {
         viewModel.load(categoryId)
     }
@@ -60,7 +62,7 @@ fun SuccessSearchScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(places) { place ->
-                PlaceWithDescription(place = place, modifier = Modifier) { p ->
+                PlaceWithDescription(place = place, modifier = Modifier,favouritePlaces.any { it.id == place.id },{viewModel.toggleFavourites(place)}) { p ->
                     navigateToPlaceDetail(ctx, p)
                 }
             }

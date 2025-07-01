@@ -200,6 +200,21 @@ class RestApiClient(val httpClient: HttpClient){
         }
     }
 
+    suspend fun toggleFavourite(placeId: Int): Boolean {
+        val url = "$REST_API_ADDRESS/favorites/toggle"
+        return try {
+            val response: HttpResponse = httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(FavoriteRequest(placeId))
+            }
+            response.status == HttpStatusCode.OK
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+
     // Rimuove il place dai preferiti dell’utente corrente
     suspend fun removeFavorite(placeId: Int): Boolean {
         val url = "$REST_API_ADDRESS/favorites/remove"
@@ -218,13 +233,13 @@ class RestApiClient(val httpClient: HttpClient){
 
 
 
-    // (Opzionale) Recupera la lista di PlaceDto preferiti
-    suspend fun getFavorites(): List<PlaceDto> {
+    suspend fun getFavorites(): List<Place> {
         val url = "$REST_API_ADDRESS/favorites"
         return try {
             httpClient.post(url) {
                 bearerAuth(accessToken)
-            }.body()
+            }.body<List<PlaceDto>>()
+                .map { it.toDto() }
         } catch (_: Exception) {
             emptyList()
         }

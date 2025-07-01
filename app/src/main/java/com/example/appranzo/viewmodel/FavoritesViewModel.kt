@@ -23,8 +23,7 @@ class FavouritesViewModel(
 
     private fun loadFavorites() {
         viewModelScope.launch {
-            val dtoList: List<PlaceDto> = restApiClient.getFavorites()
-            _favorites.value = dtoList.map { it.toDto() }
+            _favorites.value = restApiClient.getFavorites()
         }
     }
     fun removeFavorite(placeId: Int) {

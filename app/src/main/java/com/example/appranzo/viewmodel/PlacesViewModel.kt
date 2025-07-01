@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 data class HomePageState(
     val categories: List<Category> = emptyList(),
     val nearPlaces: List<Place> = emptyList(),
+    val favouritePlaces: List<Place> = emptyList(),
     val isLoading: Boolean = false, // Add isLoading state for better UI feedback
     val error: String? = null // Add error state for better UI feedback
 )
@@ -37,6 +38,10 @@ class PlacesViewModel(private val restApiClient: RestApiClient, application: App
     init {
         loadCategories()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(application)
+        viewModelScope.launch {
+            val favorites= restApiClient.getFavorites()
+            _homePageState.update { it.copy(favouritePlaces = favorites) }
+        }
     }
 
     fun loadCategories() {
@@ -48,6 +53,12 @@ class PlacesViewModel(private val restApiClient: RestApiClient, application: App
     fun loadNearPlaces(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             _homePageState.update { it.copy(nearPlaces = restApiClient.getNearRestaurants(latitude, longitude), isLoading = false) } // Update isLoading
+        }
+    }
+
+     fun toggleFavourites(place:Place){
+        val a = viewModelScope.launch {
+            restApiClient.toggleFavourite(placeId = place.id)
         }
     }
 
