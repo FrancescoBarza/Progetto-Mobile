@@ -99,7 +99,7 @@ fun FavoritesScreen(
                                         )
                                         Spacer(Modifier.height(4.dp))
                                         Row {
-                                            repeat(place.rating.toInt()) {
+                                            repeat(place.rating?.toInt()?:1) {
                                                 Icon(
                                                     imageVector = Icons.Filled.Star,
                                                     contentDescription = null,

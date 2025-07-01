@@ -9,5 +9,5 @@ data class Place(
     val photoUrl: String?,
     val categoryName: String,
     val rating:Double,
-    val distanceFromUser:Double?
+    val distanceFromUser:Double?,
 )

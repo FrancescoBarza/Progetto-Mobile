@@ -28,6 +28,7 @@ fun ProfileScreen(
     val ctx = LocalContext.current
     fun onSuccesfullLogout(navController: NavController,ctx: Context){
         val intent = Intent(ctx, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         ctx.startActivity(intent)
     }
 
@@ -95,9 +96,6 @@ fun ProfileScreen(
                     .fillMaxWidth()
                     .clickable {
                         viewModel.logOut(onSuccessfullLogout = {onSuccesfullLogout(navController, ctx = ctx)})
-                        navController.navigate(Routes.LOGIN) {
-                            popUpTo(Routes.MAIN) { inclusive = true }
-                        }
                     }
             )
         }

@@ -21,7 +21,8 @@ data class PlaceDto(
     val longitude: Double,
     val photoUrl: String? = null,
     val categoryId: Int,
-    val distanceFromUser: Double? = null
+    val distanceFromUser: Double? = null,
+    val averageRating: Double?
 ){
     fun toDto(): Place {
         return Place(
@@ -32,16 +33,11 @@ data class PlaceDto(
             city,
             photoUrl,
             "",
-            1.0,
+            averageRating?:1.0,
             distanceFromUser
         )
     }
 }
-
-@Serializable
-data class ReverseGeocodingResponse(
-    val address: AddressDto
-)
 
 @Serializable
 data class AddressDto(

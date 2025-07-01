@@ -130,10 +130,10 @@ fun HomeScreen2(navController: NavController,isGpsEnabled: Boolean,viewModel: Pl
                 modifier = Modifier,
                 listOf(
                     Category(1,"pizza"),
-                    Category(1,"pizza"),
-                    Category(1,"pizza"),
-                    Category(1,"pizza"),
-                    Category(1,"pizza")
+                    Category(2,"pub"),
+                    Category(3,"cafe"),
+                    Category(4,"restaurant"),
+                    Category(1,"undefined")
                 )
             )
         }
@@ -283,7 +283,7 @@ fun HighlitedRestaurants(
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     Row {
-                        repeat(place.rating.toInt()) {
+                        repeat(place.rating?.toInt() ?:1) {
                             Icon(imageVector = Icons.Default.Star, contentDescription = "Rating icon")
                         }
                     }
@@ -373,7 +373,7 @@ fun PlaceWithDescription(
             Column {
                 Text(place.name.capitalize(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Row {
-                    repeat(place.rating.toInt()) {
+                    repeat(place.rating?.toInt() ?:1) {
                         Icon(imageVector = Icons.Default.Star, contentDescription = "Rating icon")
                     }
                 }

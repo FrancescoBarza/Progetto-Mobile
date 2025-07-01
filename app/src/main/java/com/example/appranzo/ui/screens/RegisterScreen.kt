@@ -19,6 +19,7 @@ import org.koin.androidx.compose.koinViewModel
 
 fun onSuccesfullRegistration(navController: NavController,ctx: Context){
     val intent = Intent(ctx, MainActivity::class.java)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     ctx.startActivity(intent)
 }
 fun toastError(str: String) {
