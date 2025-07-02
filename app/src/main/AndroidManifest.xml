@@ -50,6 +50,14 @@
             android:theme="@style/Theme.APPranzo">
         </activity>
 
+        <activity
+            android:name=".ReviewActivity"
+            android:exported="false"
+            android:label="APPranzo"
+            android:theme="@style/Theme.APPranzo">
+        </activity>
+
+
     </application>
 
 </manifest>

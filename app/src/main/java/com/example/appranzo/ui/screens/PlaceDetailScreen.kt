@@ -1,12 +1,15 @@
-
 package com.example.appranzo.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,47 +17,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.appranzo.ui.theme.APPranzoTheme
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.StarBorder
-import androidx.compose.material.icons.filled.StarHalf
-import androidx.compose.material.icons.filled.StarRate
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.appranzo.communication.remote.loginDtos.ReviewDto
 import com.example.appranzo.data.models.Place
-import com.example.appranzo.viewmodel.RestaurantDetailActualState
 import com.example.appranzo.viewmodel.PlaceDetailViewModel
+import com.example.appranzo.viewmodel.RestaurantDetailActualState
+import org.koin.androidx.compose.koinViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.platform.LocalContext
+import com.example.appranzo.ReviewActivity
+import com.example.appranzo.ui.navigation.Routes
 
-// -------------------
-// Data classes
-// -------------------
 
-data class Review(
-    val author: String,
-    val date: String,      // es. "12/05/2025"
-    val rating: Int,       // da 1 a 5
-    val content: String
-)
-
-// ----------------------------------------------------
-// Composable principale (contenuto senza ViewModel/Nav)
-// ----------------------------------------------------
 @Composable
 fun RestaurantDetailContent(
     restaurantId: Int,
-    viewModel: PlaceDetailViewModel,
+    viewModel: PlaceDetailViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
+    val detailState by viewModel.state.collectAsStateWithLifecycle()
+    val reviews by viewModel.reviews.collectAsStateWithLifecycle()
+    val isReviewLoading by viewModel.isReviewsLoading.collectAsStateWithLifecycle()
+
     LaunchedEffect(restaurantId) {
         viewModel.loadRestaurantById(restaurantId)
+        viewModel.loadReviews(restaurantId)
     }
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    when (val actualState = state) {
+
+    when (val actualState = detailState) {
         is RestaurantDetailActualState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -63,29 +55,46 @@ fun RestaurantDetailContent(
 
         is RestaurantDetailActualState.Success -> {
             val restaurant = actualState.restaurant
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding()
-            ) {
+
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
                 item {
                     Box(
-                        Modifier
+                        modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
-                            .background(Color.Gray),
-                        contentAlignment = Alignment.Center
+                            .background(Color.Gray)
                     ) {
+                        // Freccia in alto a sinistra
+                        IconButton(
+                            onClick = {
+                                if (context is androidx.activity.ComponentActivity) {
+                                    context.finish()
+                                }
+                            },
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(16.dp, 56.dp, 16.dp, 16.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Indietro",
+                                tint = Color.White
+                            )
+                        }
+
+                        // Icona centrale
                         Icon(
                             imageVector = Icons.Default.Place,
                             contentDescription = "Placeholder Immagine",
                             tint = Color.White,
-                            modifier = Modifier.size(64.dp)
+                            modifier = Modifier
+                                .size(64.dp)
+                                .align(Alignment.Center)
                         )
                     }
                 }
 
-                // Nome, cucina, indirizzo e distanza
+
                 item {
                     Column(
                         modifier = Modifier
@@ -109,7 +118,6 @@ fun RestaurantDetailContent(
                     }
                 }
 
-                // Valutazione media e stelle
                 item {
                     Column(
                         modifier = Modifier
@@ -131,9 +139,9 @@ fun RestaurantDetailContent(
                             val halfStar = ((restaurant.rating - filledStars) >= 0.5)
                             for (i in 1..5) {
                                 val icon = when {
-                                    i <= filledStars -> Icons.Default.StarRate // qui potresti cambiare con ic_star_filled
-                                    i == filledStars + 1 && halfStar -> Icons.Default.StarHalf // placeholder mezza stella
-                                    else -> Icons.Default.StarBorder // placeholder stella vuota
+                                    i <= filledStars -> Icons.Default.StarRate
+                                    i == filledStars + 1 && halfStar -> Icons.Default.StarHalf
+                                    else -> Icons.Default.StarBorder
                                 }
                                 Icon(
                                     imageVector = icon,
@@ -146,7 +154,7 @@ fun RestaurantDetailContent(
                     }
                 }
 
-                // Distribuzione punteggi (grafico a barre)
+                // Distribuzione voti calcolata dalle recensioni
                 item {
                     Spacer(Modifier.height(16.dp))
                     Text(
@@ -156,14 +164,19 @@ fun RestaurantDetailContent(
                     )
                     Spacer(Modifier.height(8.dp))
 
-                    val maxCount = 5  //TODO numero recensioni con tot stelle
+                    val starCounts = (1..5).associateWith { star ->
+                        reviews.count { it.rating.toInt() == star }
+                    }
+
+                    val maxCount = starCounts.values.maxOrNull() ?: 1
+
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         (5 downTo 1).forEach { starValue ->
-                            val count = 5
+                            val count = starCounts[starValue] ?: 0
                             RatingBarRow(
                                 star = starValue,
                                 count = count,
-                                maxCount = 10,
+                                maxCount = maxCount,
                                 barHeight = 12.dp,
                                 barColor = MaterialTheme.colorScheme.primary
                             )
@@ -172,7 +185,6 @@ fun RestaurantDetailContent(
                     }
                 }
 
-                // Sezione “Recensioni”
                 item {
                     Spacer(Modifier.height(24.dp))
                     Text(
@@ -183,48 +195,73 @@ fun RestaurantDetailContent(
                     Spacer(Modifier.height(8.dp))
                 }
 
-                // Elenco delle recensioni
-                /*  items(restaurant.reviews) { review ->
-            ReviewItem(review)
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
-        }
-        item {
-            Spacer(Modifier.height(16.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Button(
-                    onClick = { /* Azione per lasciare recensione */ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                ) {
-                    Text("Lascia una recensione")
+                if (isReviewLoading) {
+                    item {
+                        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                        }
+                    }
+                } else {
+                    if (reviews.isEmpty()) {
+                        item {
+                            Text(
+                                text = "Nessuna recensione disponibile.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                    } else {
+                        items(reviews) { review ->
+                            ReviewItem(
+                                review = Review(
+                                    author = review.username,
+                                    date = review.creationDate,
+                                    rating = review.rating.toInt(),
+                                    content = review.comment
+                                )
+                            )
+                            Divider(Modifier.padding(vertical = 8.dp))
+                        }
+                    }
                 }
-            }
-            Spacer(Modifier.height(16.dp))
-        } */
 
-                // 8) Spazio finale per non coprire il contenuto
+                // Bottone "Lascia una recensione"
                 item {
-                    Spacer(Modifier.height(80.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Button(
+                            onClick = {
+                                val intent = Intent(context, ReviewActivity::class.java)
+                                intent.putExtra("restaurantId", restaurantId)
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp)
+                        ) {
+                            Text(text = "Lascia una recensione")
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }
 
-        is RestaurantDetailActualState.Error ->
+        is RestaurantDetailActualState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = "Impossible to load this restaurant")
             }
+        }
     }
 }
 
-// --- Composable di supporto: riga con stella + barra orizzontale proporzionale ---
 @Composable
-private fun RatingBarRow(
+fun RatingBarRow(
     star: Int,
     count: Int,
     maxCount: Int,
@@ -238,7 +275,7 @@ private fun RatingBarRow(
             style = MaterialTheme.typography.bodyMedium
         )
         Icon(
-            imageVector = Icons.Default.StarRate, // placeholder stella piena
+            imageVector = Icons.Default.StarRate,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.size(16.dp)
@@ -267,9 +304,8 @@ private fun RatingBarRow(
     }
 }
 
-// --- Composable di supporto: singola recensione ---
 @Composable
-private fun ReviewItem(review: Review) {
+fun ReviewItem(review: Review) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -286,15 +322,15 @@ private fun ReviewItem(review: Review) {
         Row {
             repeat(review.rating) {
                 Icon(
-                    imageVector = Icons.Default.StarRate, // placeholder stella piena
+                    imageVector = Icons.Default.StarRate,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.size(16.dp)
                 )
             }
-            repeat(5-review.rating){
+            repeat(5 - review.rating) {
                 Icon(
-                    imageVector = Icons.Default.StarBorder, // placeholder stella piena
+                    imageVector = Icons.Default.StarBorder,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.size(16.dp)
@@ -311,18 +347,9 @@ private fun ReviewItem(review: Review) {
     }
 }
 
-// ----------------------
-// Preview di sola UI
-// ----------------------
-private val sampleRestaurant = Place(
-    id = 1,
-    name = "Trattoria Da Mario",
-    categoryName = "Romagnolo",
-    address = "Via Roma, 12 – Cesena",
-    distanceFromUser = 2.3,
-    rating = 4.0,
-    description = "ciao",
-    city = "Cesena",
-    photoUrl = ""
+data class Review(
+    val author: String,
+    val date: String,
+    val rating: Int,
+    val content: String
 )
-

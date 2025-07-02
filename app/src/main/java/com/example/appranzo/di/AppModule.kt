@@ -2,6 +2,7 @@
 
 package com.example.appranzo.di
 
+
 import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStore
@@ -19,6 +20,7 @@ import com.example.appranzo.viewmodel.PlaceDetailViewModel
 import com.example.appranzo.viewmodel.PlacesViewModel
 import com.example.appranzo.viewmodel.ProfileDetailViewModel
 import com.example.appranzo.viewmodel.ProfileViewModel
+import com.example.appranzo.viewmodel.ReviewViewModel
 import com.example.appranzo.viewmodel.SearchViewModel
 import com.example.appranzo.viewmodel.SuccessSearchViewModel
 import io.ktor.client.HttpClient
@@ -70,5 +72,6 @@ val appModule = module {
     viewModel { SuccessSearchViewModel(get()) }
     viewModel { PlaceDetailViewModel(get())}
     viewModel { PlacesViewModel(get(),androidApplication()) }
+    viewModel { ReviewViewModel(get()) }
 
 }

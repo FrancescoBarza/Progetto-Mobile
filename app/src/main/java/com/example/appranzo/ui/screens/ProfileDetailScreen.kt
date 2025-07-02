@@ -1,5 +1,6 @@
 package com.example.appranzo.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -17,6 +18,7 @@ import com.example.appranzo.viewmodel.ProfileDetailViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ProfileDetailScreen(
     navController: NavController,
@@ -30,56 +32,45 @@ fun ProfileDetailScreen(
                 title = { Text("Dettagli Profilo") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Indietro"
-                        )
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Indietro")
                     }
                 }
             )
         }
     ) { padding ->
         Box(
-            modifier = Modifier
+            Modifier
                 .fillMaxSize()
                 .padding(padding),
             contentAlignment = Alignment.Center
         ) {
-            if (user == null) {
-                Text(
-                    "Utente non autenticato",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            } else {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.padding(24.dp)
+            when (val u = user) {
+                null -> CircularProgressIndicator()
+                else -> Column(
+                    horizontalAlignment   = Alignment.CenterHorizontally,
+                    verticalArrangement   = Arrangement.spacedBy(16.dp),
+                    modifier              = Modifier.padding(24.dp)
                 ) {
-                    user!!.photoUrl?.let { url ->
+                    // Foto o placeholder
+                    u.photoUrl?.let { url ->
                         AsyncImage(
-                            model = url,
+                            model              = url,
                             contentDescription = "Foto profilo",
-                            modifier = Modifier
+                            modifier           = Modifier
                                 .size(120.dp)
                                 .clip(CircleShape)
                         )
                     } ?: Icon(
                         Icons.Default.Person,
                         contentDescription = "Placeholder foto",
-                        modifier = Modifier
+                        modifier           = Modifier
                             .size(120.dp)
                             .clip(CircleShape)
                     )
 
-                    Text(
-                        "Username: ${user!!.username}",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        "ID: ${user!!.id}",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    Text("Username: ${u.username}", style = MaterialTheme.typography.titleMedium)
+                    Text("Email:    ${u.email}",    style = MaterialTheme.typography.bodyLarge)
+                    Text("Punti:    ${u.points}",   style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }

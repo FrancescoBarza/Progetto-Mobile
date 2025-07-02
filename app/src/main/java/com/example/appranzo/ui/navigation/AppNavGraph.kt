@@ -11,6 +11,8 @@ import com.example.appranzo.ui.screens.LoginScreen
 import com.example.appranzo.ui.screens.RegisterScreen
 import com.example.appranzo.ui.navigation.Routes
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 import com.example.appranzo.ui.navigation.Routes.MAIN
 import com.example.appranzo.ui.navigation.Routes.REGISTER
@@ -19,6 +21,7 @@ import com.example.appranzo.ui.navigation.Routes.SETTINGS
 import com.example.appranzo.ui.screens.FavoritesScreen
 import com.example.appranzo.ui.screens.ProfileDetailScreen
 import com.example.appranzo.ui.screens.ProfileScreen
+import com.example.appranzo.ui.screens.ReviewScreen
 import com.example.appranzo.ui.screens.SearchScreen
 import com.example.appranzo.ui.screens.SettingsScreen
 import com.example.appranzo.ui.screens.SuccessSearchScreen
@@ -36,7 +39,7 @@ fun AppNavGraph(navController: NavHostController) {
     ) {
         // 3) Main container (TopBar + BottomNav con 5 tab)
         composable(MAIN) {
-            MainScreen(navController = navController)
+            MainScreen(navController)
         }
 
         composable(Routes.PROFILE) {
@@ -68,6 +71,14 @@ fun AppNavGraph(navController: NavHostController) {
                 categoryId = catId,
                 onBack = { navController.popBackStack() }
             )
+        }
+
+        composable(
+            route = Routes.REVIEW_WITH_ARG,
+            arguments = listOf(navArgument("restaurantId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val restaurantId = backStackEntry.arguments?.getInt("restaurantId") ?: return@composable
+            ReviewScreen(restaurantId = restaurantId, navController = navController)
         }
 
 

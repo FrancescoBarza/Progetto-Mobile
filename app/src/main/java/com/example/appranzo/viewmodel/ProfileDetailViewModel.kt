@@ -24,7 +24,9 @@ class ProfileDetailViewModel(
     /** Carica i dettagli dell’utente autenticato e li pubblica su `_user` */
     private fun loadCurrentUser() {
         viewModelScope.launch {
-
+            // chiamiamo l’endpoint GET /users/me
+            val current = api.getCurrentUser()
+            _user.value = current
         }
     }
 

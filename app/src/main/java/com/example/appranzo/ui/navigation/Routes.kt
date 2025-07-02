@@ -23,4 +23,9 @@ object Routes {
     //home
     const val SEARCH = "search"
     const val SEARCH_RESULT = "search_result"
+
+    //
+    const val  REVIEW = "review"
+    const val REVIEW_WITH_ARG = "review/{restaurantId}"
+
 }

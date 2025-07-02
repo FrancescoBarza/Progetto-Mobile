@@ -29,6 +29,9 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.LocalDining
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.filled.StarHalf
+import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -376,11 +379,41 @@ fun PlaceWithDescription(
             Spacer(modifier = Modifier.width(24.dp))
             Column {
                 Text(place.name.capitalize(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                val ratingValue = (place.rating ?: 0.0).toFloat()
+                val fullStars   = ratingValue.toInt()
+                val hasHalfStar = (ratingValue - fullStars) >= 0.5f
+                val emptyStars  = 5 - fullStars - if (hasHalfStar) 1 else 0
+
                 Row {
-                    repeat(place.rating?.toInt() ?:1) {
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "Rating icon")
+                    // stelle piene
+                    repeat(fullStars) {
+                        Icon(
+                            imageVector   = Icons.Default.StarRate,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
-                }
+                    // mezza stella
+                    if (hasHalfStar) {
+                        Icon(
+                            imageVector   = Icons.Default.StarHalf,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    // stelle vuote
+                    repeat(emptyStars) {
+                        Icon(
+                            imageVector   = Icons.Default.StarBorder,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+            }
                 Text(place.description ?: "Place", fontSize = 14.sp)
             }
         }

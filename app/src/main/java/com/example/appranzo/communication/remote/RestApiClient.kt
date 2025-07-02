@@ -21,6 +21,9 @@ import com.example.appranzo.communication.remote.loginDtos.RegistrationErrorReas
 import com.example.appranzo.communication.remote.loginDtos.RegistrationRequestsDtos
 import com.example.appranzo.communication.remote.loginDtos.RequestId
 import com.example.appranzo.communication.remote.loginDtos.ResearchDto
+import com.example.appranzo.communication.remote.loginDtos.ReviewDto
+import com.example.appranzo.communication.remote.loginDtos.ReviewRequestDto
+import com.example.appranzo.communication.remote.loginDtos.ReviewResearchRequestDto
 import com.example.appranzo.communication.remote.loginDtos.UserDto
 import com.example.appranzo.data.models.Category
 import com.example.appranzo.data.models.Place
@@ -28,6 +31,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -41,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -116,6 +122,23 @@ class RestApiClient(val httpClient: HttpClient){
         }
     }
 
+    suspend fun getCurrentUser(): UserDto? {
+        val url = "$REST_API_ADDRESS/users/me"
+        return try {
+            val response = httpClient.get(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+            }
+            if (response.status == HttpStatusCode.OK) {
+                // deserializza direttamente in UserDto
+                response.body<UserDto>()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     suspend fun placeById(id:Int): Place? {
         try {
@@ -180,6 +203,63 @@ class RestApiClient(val httpClient: HttpClient){
             }
                 .body<List<PlaceDto>>()       // ricevi List<PlaceDto>
                 .map { it.toDto() }            // mappali in Place (tuo modello UI)
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun addReview(request: ReviewRequestDto): Boolean {
+        val url = "$REST_API_ADDRESS/reviews/add"
+        return try {
+            val response: HttpResponse = httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+            response.status == HttpStatusCode.OK
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    suspend fun addReviewWithPhotos(
+        request: ReviewRequestDto,
+        photos: List<Pair<String, ByteArray>>
+    ): Boolean {
+        val url = "$REST_API_ADDRESS/reviews/add/photos"
+        return try {
+            val response = httpClient.submitFormWithBinaryData(
+                url = url,
+                formData = formData {
+                    append("review", Json.encodeToString(request))
+                    photos.forEachIndexed { idx, (field, bytes) ->
+                        append(
+                            key = field,
+                            value = bytes,
+                            headers = Headers.build {
+                                append(HttpHeaders.ContentType, ContentType.Image.Any.toString())
+                                append(HttpHeaders.ContentDisposition, "filename=\"img$idx.jpg\"")
+                            }
+                        )
+                    }
+                }
+            ) {
+                bearerAuth(accessToken)
+            }
+            response.status == HttpStatusCode.OK
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    suspend fun getReviews(request: ReviewResearchRequestDto): List<ReviewDto> {
+        val url = "$REST_API_ADDRESS/reviews"
+        return try {
+            httpClient.post(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.body()
         } catch (_: Exception) {
             emptyList()
         }
