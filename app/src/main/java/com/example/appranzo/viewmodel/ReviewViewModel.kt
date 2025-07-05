@@ -29,7 +29,7 @@ class ReviewViewModel(
     private val _submitState = MutableStateFlow<SubmissionState>(SubmissionState.Idle)
     val submitState: StateFlow<SubmissionState> = _submitState.asStateFlow()
 
-    // Lista immagini come coppie (campo, byteArray)
+
     private val _photos = MutableStateFlow<List<Pair<String, ByteArray>>>(emptyList())
     val photos: StateFlow<List<Pair<String, ByteArray>>> = _photos.asStateFlow()
 

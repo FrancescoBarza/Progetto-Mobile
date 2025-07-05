@@ -17,7 +17,6 @@ import com.example.appranzo.ui.screens.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController) {
-    // NavController interno per i 5 tab
     val tabNav = rememberNavController()
 
     Scaffold(

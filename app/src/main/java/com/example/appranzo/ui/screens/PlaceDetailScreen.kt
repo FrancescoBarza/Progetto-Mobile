@@ -65,7 +65,6 @@ fun RestaurantDetailContent(
                             .height(200.dp)
                             .background(Color.Gray)
                     ) {
-                        // Freccia in alto a sinistra
                         IconButton(
                             onClick = {
                                 if (context is androidx.activity.ComponentActivity) {
@@ -83,7 +82,6 @@ fun RestaurantDetailContent(
                             )
                         }
 
-                        // Icona centrale
                         Icon(
                             imageVector = Icons.Default.Place,
                             contentDescription = "Placeholder Immagine",
@@ -155,7 +153,6 @@ fun RestaurantDetailContent(
                     }
                 }
 
-                // Distribuzione voti calcolata dalle recensioni
                 item {
                     Spacer(Modifier.height(16.dp))
                     Text(
@@ -213,7 +210,6 @@ fun RestaurantDetailContent(
                         }
                     } else {
 
-// …con questo blocco:
                         items(reviews) { review ->
                             Column(modifier = Modifier.padding(vertical = 8.dp)) {
                                 ReviewItem(
@@ -241,7 +237,6 @@ fun RestaurantDetailContent(
                     }
                 }
 
-                // Bottone "Lascia una recensione"
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
                     Box(

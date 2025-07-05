@@ -51,7 +51,6 @@ fun ProfileDetailScreen(
                     verticalArrangement   = Arrangement.spacedBy(16.dp),
                     modifier              = Modifier.padding(24.dp)
                 ) {
-                    // Foto o placeholder
                     u.photoUrl?.let { url ->
                         AsyncImage(
                             model              = url,

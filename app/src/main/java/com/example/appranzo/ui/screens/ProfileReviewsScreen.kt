@@ -63,13 +63,11 @@ fun ProfileReviewsScreen(
             } else {
                 items(reviews) { r ->
                     Column(modifier = Modifier.padding(16.dp)) {
-                        // Nome del ristorante
                         Text(
                             text = r.placeName,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.padding(bottom = 4.dp)
                         )
-                        // Recensione vera e propria
                         ReviewItem(
                             review = Review(
                                 author = r.username,
@@ -79,7 +77,6 @@ fun ProfileReviewsScreen(
                             )
                         )
                         Spacer(Modifier.height(4.dp))
-                        // Il link “Vedi in dettaglio →”
                         Text(
                             text = "Vedi in dettaglio →",
                             style = MaterialTheme.typography.bodyMedium.copy(

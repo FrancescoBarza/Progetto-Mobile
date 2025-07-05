@@ -4,12 +4,11 @@ import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.AndroidViewModel // Change this import
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appranzo.communication.remote.RestApiClient
 import com.example.appranzo.data.models.Category
 import com.example.appranzo.data.models.Place
-import com.example.appranzo.data.repository.PlacesRepository // If you're not using this, you can remove it
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +21,8 @@ data class HomePageState(
     val categories: List<Category> = emptyList(),
     val nearPlaces: List<Place> = emptyList(),
     val favouritePlaces: List<Place> = emptyList(),
-    val isLoading: Boolean = false, // Add isLoading state for better UI feedback
-    val error: String? = null // Add error state for better UI feedback
+    val isLoading: Boolean = false,
+    val error: String? = null
 )
 
 class PlacesViewModel(private val restApiClient: RestApiClient, application: Application) : AndroidViewModel(application) {
@@ -52,7 +51,7 @@ class PlacesViewModel(private val restApiClient: RestApiClient, application: App
 
     fun loadNearPlaces(latitude: Double, longitude: Double) {
         viewModelScope.launch {
-            _homePageState.update { it.copy(nearPlaces = restApiClient.getNearRestaurants(latitude, longitude), isLoading = false) } // Update isLoading
+            _homePageState.update { it.copy(nearPlaces = restApiClient.getNearRestaurants(latitude, longitude), isLoading = false) }
         }
     }
 
@@ -65,18 +64,18 @@ class PlacesViewModel(private val restApiClient: RestApiClient, application: App
     fun getLastLocation() {
         val context = getApplication<Application>().applicationContext
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            _homePageState.update { it.copy(isLoading = true, error = null) } // Set loading state
+            _homePageState.update { it.copy(isLoading = true, error = null) }
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 location?.let {
                     loadNearPlaces(it.latitude, it.longitude)
                 } ?: run {
-                    _homePageState.update { it.copy(error = "Could not get last known location. Make sure GPS is enabled.", isLoading = false) } // Update error and loading
+                    _homePageState.update { it.copy(error = "Could not get last known location. Make sure GPS is enabled.", isLoading = false) }
                 }
             }.addOnFailureListener { e ->
-                _homePageState.update { it.copy(error = "Error getting location: ${e.message}", isLoading = false) } // Update error and loading
+                _homePageState.update { it.copy(error = "Error getting location: ${e.message}", isLoading = false) }
             }
         } else {
-            _homePageState.update { it.copy(error = "Location permission not granted.", isLoading = false) } // Update error and loading
+            _homePageState.update { it.copy(error = "Location permission not granted.", isLoading = false) }
         }
     }
 }

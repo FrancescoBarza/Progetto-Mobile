@@ -2,8 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-
-    //aggiunti
     alias(libs.plugins.serialization)
 }
 
@@ -52,7 +50,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    //aggiunti
     implementation(libs.androidx.lifecycle.runtime.compose.android)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
@@ -62,16 +59,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.ui.text.google.fonts)
-    // Osmdroid
     implementation ("org.osmdroid:osmdroid-android:6.1.10")
-
-    // Accompanist Permissions
     implementation ("com.google.accompanist:accompanist-permissions:0.30.1")
-
-    // Lifecycle–Compose (for LocalLifecycleOwner)
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-
-    // Preference KTX (for PreferenceManager)
     implementation ("androidx.preference:preference-ktx:1.2.0")
 
 
@@ -89,4 +79,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.3")
     implementation("io.coil-kt:coil-compose:2.3.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
 }

@@ -27,9 +27,6 @@ data class ReviewDto(
     val creationDate: String
 )
 
-//lo uso per la pagina ProfileReviewsScreen
-// mi serve per fare vedere non solo la recensione
-// ma anche il nome del posto
 @Serializable
 data class ProfileReviewDto(
     val id: Int,

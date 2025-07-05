@@ -130,7 +130,6 @@ class RestApiClient(val httpClient: HttpClient){
                 contentType(ContentType.Application.Json)
             }
             if (response.status == HttpStatusCode.OK) {
-                // deserializza direttamente in UserDto
                 response.body<UserDto>()
             } else {
                 null
@@ -178,9 +177,9 @@ class RestApiClient(val httpClient: HttpClient){
                 bearerAuth(accessToken)
             }.body()
 
-            // ORDINA PER ID e poi mappa
+
             dtoList
-                .sortedBy { it.id }         // ← qui ordini per id crescente
+                .sortedBy { it.id }
                 .map { Category(id=it.id, name = it.name) }
         } catch (e: Exception) {
             emptyList()
@@ -202,7 +201,6 @@ class RestApiClient(val httpClient: HttpClient){
 
     suspend fun searchPlaces(query: String): List<Place> {
         val url = "$REST_API_ADDRESS/places/search"
-        // nel backend questo endpoint si aspetta un ResearchDto
         val bodyDto = ResearchDto(
             latitude        = null,
             longitude       = null,
@@ -214,8 +212,8 @@ class RestApiClient(val httpClient: HttpClient){
                 contentType(ContentType.Application.Json)
                 setBody(bodyDto)
             }
-                .body<List<PlaceDto>>()       // ricevi List<PlaceDto>
-                .map { it.toDto() }            // mappali in Place (tuo modello UI)
+                .body<List<PlaceDto>>()
+                .map { it.toDto() }
         } catch (_: Exception) {
             emptyList()
         }
@@ -278,7 +276,6 @@ class RestApiClient(val httpClient: HttpClient){
         }
     }
 
-    // Aggiunge il place ai preferiti dell’utente corrente
     suspend fun addFavorite(placeId: Int): Boolean {
         val url = "$REST_API_ADDRESS/favorites/add"
         return try {
@@ -308,7 +305,6 @@ class RestApiClient(val httpClient: HttpClient){
     }
 
 
-    // Rimuove il place dai preferiti dell’utente corrente
     suspend fun removeFavorite(placeId: Int): Boolean {
         val url = "$REST_API_ADDRESS/favorites/remove"
         return try {

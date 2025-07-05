@@ -33,13 +33,11 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 fun MapScreen() {
     val context = LocalContext.current
 
-    // Inizializza osmdroid (solo una volta)
     LaunchedEffect(Unit) {
         Configuration.getInstance()
             .load(context, PreferenceManager.getDefaultSharedPreferences(context))
     }
 
-    // Permesso di localizzazione
     val locationPermState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     LaunchedEffect(Unit) {
         if (!locationPermState.status.isGranted) {
@@ -70,7 +68,6 @@ private fun OsmdroidMap() {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // 1) Crea la MapView
     val mapView = remember {
         MapView(context).apply {
             setTileSource(TileSourceFactory.MAPNIK)
@@ -79,7 +76,6 @@ private fun OsmdroidMap() {
         }
     }
 
-    // 2) Overlay per posizione utente
     DisposableEffect(Unit) {
         val locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(context), mapView).apply {
             enableMyLocation()
@@ -100,24 +96,21 @@ private fun OsmdroidMap() {
         }
     }
 
-    // 3) Overlay per intercettare i tap sulla mappa
     DisposableEffect(Unit) {
         val eventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
-                // Qui gestisci il tap: per esempio aggiungi un marker
                 val marker = Marker(mapView).apply {
                     position = p
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     icon = ContextCompat.getDrawable(context, org.osmdroid.library.R.drawable.marker_default)
                     setOnMarkerClickListener { _, _ ->
-                        // click sul marker: mostra un Toast o un dialog
                         Toast.makeText(context, "Marker a: ${"%.5f".format(p.latitude)}, ${"%.5f".format(p.longitude)}", Toast.LENGTH_SHORT).show()
                         true
                     }
                 }
                 mapView.overlays.add(marker)
                 mapView.invalidate()
-                return true  // consumiamo l’evento
+                return true
             }
             override fun longPressHelper(p: GeoPoint): Boolean = false
         })
@@ -128,13 +121,12 @@ private fun OsmdroidMap() {
         }
     }
 
-    // 4) Gestione del lifecycle
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> mapView.onResume()
                 Lifecycle.Event.ON_PAUSE  -> mapView.onPause()
-                else -> { /* no-op */ }
+                else -> { }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -144,7 +136,6 @@ private fun OsmdroidMap() {
         }
     }
 
-    // 5) Inserimento in Compose
     AndroidView(
         factory = { mapView },
         modifier = Modifier.fillMaxSize()

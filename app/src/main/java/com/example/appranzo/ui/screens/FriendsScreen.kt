@@ -21,7 +21,6 @@ import org.koin.androidx.compose.koinViewModel
 fun FriendsScreen(
     viewModel: FriendsViewModel = koinViewModel()
 ) {
-    // Colleziona gli stati dal ViewModel
     val friends by viewModel.friends.collectAsState()
     val pendingRequests by viewModel.pendingRequests.collectAsState()
     val usernameInput by viewModel.usernameInput.collectAsState()
@@ -40,7 +39,6 @@ fun FriendsScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Sezione "Invia richiesta"
                 item {
                     Text("Invia richiesta amico", style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.height(8.dp))
@@ -65,7 +63,6 @@ fun FriendsScreen(
                     )
                 }
 
-                // Sezione "Richieste in sospeso"
                 item {
                     Text("Richieste in sospeso", style = MaterialTheme.typography.titleLarge)
                 }
@@ -84,8 +81,6 @@ fun FriendsScreen(
                         Divider()
                     }
                 }
-
-                // Sezione "Amici"
                 item {
                     Text("I tuoi Amici", style = MaterialTheme.typography.titleLarge)
                 }
@@ -100,8 +95,6 @@ fun FriendsScreen(
                     }
                 }
             }
-
-            // Mostra un indicatore di caricamento al centro dello schermo
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
@@ -128,7 +121,6 @@ private fun FriendRequestItem(
 ) {
     ListItem(
         headlineContent = {
-            // Mostriamo l'ID del mittente perché non abbiamo il suo username
             Text("Richiesta da Utente #${request.senderId}")
         },
         leadingContent = {

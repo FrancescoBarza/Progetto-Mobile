@@ -112,8 +112,6 @@ fun LoginScreen(
 
         TextButton(
             onClick = {
-                // per ora rimanda pure a REGISTER;
-                // in futuro potrai cambiare in Routes.MAIN o dove preferisci
                 navController.navigate(Routes.REGISTER)
             },
             colors = ButtonDefaults.textButtonColors(

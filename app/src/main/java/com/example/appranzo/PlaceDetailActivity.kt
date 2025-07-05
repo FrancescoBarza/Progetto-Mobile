@@ -29,13 +29,9 @@ class PlaceDetailActivity : ComponentActivity() {
 
 @Composable
 fun PlaceDetail(id:Int) {
-    // 1) Recupera ThemeViewModel da Koin
     val themeViewModel: ThemeViewModel = koinViewModel()
     val navController = rememberNavController()
-    // 2) Leggi lo stato corrente (Light, Dark, System)
     val themeState by themeViewModel.state.collectAsStateWithLifecycle()
-
-    // 3) “Converti” AppTheme (enum) in boolean per il parametro darkTheme
     val darkModeEnabled = when (themeState.theme) {
         Theme.Light -> false
         Theme.Dark -> true

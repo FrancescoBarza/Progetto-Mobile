@@ -14,23 +14,19 @@ class ProfileDetailViewModel(
 ) : ViewModel() {
 
     private val _user = MutableStateFlow<UserDto?>(null)
-    /** Esponiamo un StateFlow che la UI può collezionare */
     val user: StateFlow<UserDto?> = _user.asStateFlow()
 
     init {
         loadCurrentUser()
     }
 
-    /** Carica i dettagli dell’utente autenticato e li pubblica su `_user` */
     private fun loadCurrentUser() {
         viewModelScope.launch {
-            // chiamiamo l’endpoint GET /users/me
             val current = api.getCurrentUser()
             _user.value = current
         }
     }
 
-    /** Permette di forzare un refresh manuale dei dati */
     fun refresh() {
         loadCurrentUser()
     }

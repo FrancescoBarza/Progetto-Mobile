@@ -42,7 +42,6 @@ fun ReviewScreen(
     val photos by viewModel.photos.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    // Galleria
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
     ) { uris: List<Uri> ->
@@ -85,7 +84,6 @@ fun ReviewScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Rating
             Text("Valutazione", style = MaterialTheme.typography.titleMedium)
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 (1..5).forEach { star ->
@@ -98,7 +96,6 @@ fun ReviewScreen(
                 }
             }
 
-            // Testo recensione
             OutlinedTextField(
                 value = reviewText,
                 onValueChange = viewModel::onContentChange,
@@ -109,7 +106,6 @@ fun ReviewScreen(
                 maxLines = 5
             )
 
-            // Foto selezionate
             Text("Foto", style = MaterialTheme.typography.titleMedium)
             if (photos.isEmpty()) {
                 Text("Nessuna foto selezionata.")
@@ -128,12 +124,10 @@ fun ReviewScreen(
                 }
             }
 
-            // Aggiungi immagini
             Button(onClick = { galleryLauncher.launch("image/*") }) {
                 Text("Aggiungi immagini")
             }
 
-            // Bottone invio
             Button(
                 onClick = { viewModel.submitReview(restaurantId) },
                 modifier = Modifier

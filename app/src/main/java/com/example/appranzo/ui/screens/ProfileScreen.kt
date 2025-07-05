@@ -49,7 +49,6 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // I miei dati
             ListItem(
                 headlineContent = { Text("I miei dati") },
                 leadingContent = {
@@ -66,7 +65,6 @@ fun ProfileScreen(
             )
             Divider()
 
-            // Le mie recensioni
             ListItem(
                 headlineContent = { Text("Le mie recensioni") },
                 leadingContent = {
@@ -83,7 +81,6 @@ fun ProfileScreen(
             )
             Divider()
 
-            // Disconnetti
             ListItem(
                 headlineContent = { Text("Disconnetti") },
                 leadingContent = {

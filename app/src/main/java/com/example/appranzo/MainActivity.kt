@@ -26,13 +26,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
-    // 1) Recupera ThemeViewModel da Koin
     val themeViewModel: ThemeViewModel = koinViewModel()
-
-    // 2) Leggi lo stato corrente (Light, Dark, System)
     val themeState by themeViewModel.state.collectAsStateWithLifecycle()
-
-    // 3) “Converti” AppTheme (enum) in boolean per il parametro darkTheme
     val darkModeEnabled = when (themeState.theme) {
         Theme.Light  -> false
         Theme.Dark   -> true

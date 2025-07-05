@@ -25,17 +25,16 @@ class ProfileReviewsViewModel(
 
     private fun loadMyReviews() {
         viewModelScope.launch {
-            // recupera le review “grezze”
-            val raw = api.getMyReviews()     // chiama /reviews/me
-            // estrai tutti gli id unici per non duplicare le chiamate
+            val raw = api.getMyReviews()
+
             val placeIds = raw.map { it.placeId }.toSet()
 
-            // parallelo: per ogni placeId, chiama placeById()
+
             val lookup = placeIds.map { id ->
                 async { id to (api.placeById(id)?.name ?: "—") }
             }.awaitAll().toMap()
 
-            // costruisci la lista UI
+
             val ui = raw.map { dto ->
                 ProfileReviewDto(
                     id = dto.id,

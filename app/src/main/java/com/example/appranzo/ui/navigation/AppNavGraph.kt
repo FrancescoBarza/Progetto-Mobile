@@ -38,7 +38,6 @@ fun AppNavGraph(navController: NavHostController) {
         navController    = navController,
         startDestination = MAIN
     ) {
-        // 3) Main container (TopBar + BottomNav con 5 tab)
         composable(MAIN) {
             MainScreen(navController)
         }
@@ -54,9 +53,7 @@ fun AppNavGraph(navController: NavHostController) {
             SettingsScreen(navController = navController)
         }
 
-        // 4) Sottomenu “Aspetto / Tema”
         composable(Routes.SETTINGS_THEME) {
-            // inietto ThemeViewModel da Koin
             val vm: ThemeViewModel = koinViewModel()
             val themeState by vm.state.collectAsStateWithLifecycle()
             ThemeScreen (

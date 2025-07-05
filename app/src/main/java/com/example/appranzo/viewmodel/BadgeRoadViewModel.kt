@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 class BadgeRoadViewModel : ViewModel() {
-    private val thresholds = (1..10).map { it * 100 }  // 10,20,…,100
+    private val thresholds = (1..10).map { it * 100 }
 
     private val _currentPoints = MutableStateFlow(0)
     val currentPoints: StateFlow<Int> = _currentPoints

@@ -1,4 +1,3 @@
-// src/main/java/com/example/appranzo/ui/screens/SettingsScreen.kt
 package com.example.appranzo.ui.screens
 
 import androidx.compose.foundation.clickable
@@ -36,12 +35,11 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // 1) Aspetto / Tema
             ListItem(headlineContent = { Text("Aspetto / Tema") }, leadingContent = {
                     Icon(Icons.Default.Palette, contentDescription = null)
                 }, trailingContent = {
                     Icon(
-                        Icons.Default.ArrowForward, // puoi cambiare con icona “freccia destra”
+                        Icons.Default.ArrowForward,
                         contentDescription = null
                     )
                 }, modifier = Modifier
@@ -50,8 +48,6 @@ fun SettingsScreen(
                         navController.navigate(Routes.SETTINGS_THEME)
                     })
             Divider()
-
-            // 2) qui in futuro altri item di Settings...
         }
     }
 }

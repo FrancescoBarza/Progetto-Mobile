@@ -15,12 +15,12 @@ fun LoginNavGraph(navController: NavHostController) {
         navController = navController,
         startDestination = LOGIN
     ) {
-        // 1) Login → LoginScreen gestisce internamente navController.navigate(MAIN)
+
         composable(LOGIN) {
             LoginScreen(navController = navController)
         }
 
-        // 2) Register → RegisterScreen gestisce internamente navController.navigate(MAIN)
+
         composable(REGISTER) {
             RegisterScreen(navController = navController)
         }

@@ -385,7 +385,6 @@ fun PlaceWithDescription(
                 val emptyStars  = 5 - fullStars - if (hasHalfStar) 1 else 0
 
                 Row {
-                    // stelle piene
                     repeat(fullStars) {
                         Icon(
                             imageVector   = Icons.Default.StarRate,
@@ -394,7 +393,6 @@ fun PlaceWithDescription(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                    // mezza stella
                     if (hasHalfStar) {
                         Icon(
                             imageVector   = Icons.Default.StarHalf,
@@ -403,7 +401,6 @@ fun PlaceWithDescription(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                    // stelle vuote
                     repeat(emptyStars) {
                         Icon(
                             imageVector   = Icons.Default.StarBorder,

@@ -121,7 +121,6 @@ fun RegisterScreen(
 
         TextButton(
             onClick = {
-                // torna al login
                 navController.navigate(Routes.LOGIN) {
                     popUpTo(Routes.REGISTER) { inclusive = true }
                 }

@@ -58,7 +58,6 @@ fun FavoritesScreen(
                                 .clickable { navigateToPlaceDetail(ctx, place) }
                         ) {
                             Box(Modifier.fillMaxWidth()) {
-                                // X in alto a destra
                                 IconButton(
                                     onClick = { viewModel.removeFavorite(place.id) },
                                     modifier = Modifier
@@ -73,7 +72,6 @@ fun FavoritesScreen(
                                         modifier = Modifier.size(16.dp)
                                     )
                                 }
-                                // Contenuto principale
                                 Row(
                                     Modifier
                                         .padding(16.dp)

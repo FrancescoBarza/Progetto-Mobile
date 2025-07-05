@@ -23,11 +23,9 @@ class SearchViewModel(
     val results: StateFlow<List<Place>> = _results.asStateFlow()
 
     init {
-        // 1) carica le categorie (con id)
         viewModelScope.launch {
             _categories.value = restApiClient.getCategories()
         }
-        // 2) debounce sulla query e ricerca
         viewModelScope.launch {
             _query
                 .debounce(300)
@@ -40,7 +38,6 @@ class SearchViewModel(
         }
     }
 
-    /** Chiamalo dalla UI ad ogni modifica di testo */
     fun setQuery(text: String) {
         _query.value = text
     }

@@ -29,7 +29,6 @@ fun BadgeRoadScreen(
     val thresholds = viewModel.badgeThresholds
     val reversedList  = thresholds.reversed()
     val linecolor = MaterialTheme.colorScheme.primary
-    // dimensioni
     val iconSize: Dp = 40.dp
     val itemHeight: Dp = 100.dp
     val lastIndex   = thresholds.lastIndex
@@ -41,7 +40,6 @@ fun BadgeRoadScreen(
     }
     Scaffold(
         bottomBar = {
-            // questo Box resta sempre fisso in basso
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -81,7 +79,6 @@ fun BadgeRoadScreen(
                 modifier = Modifier
                     .fillParentMaxWidth()
                     .height(itemHeight)
-                    // disegna la curva che dall'item corrente va al successivo
                     .drawBehind {
                         if (index < thresholds.lastIndex) {
                             val startX = if (index % 2 == 0) iconSize.toPx() / 2f
@@ -92,8 +89,8 @@ fun BadgeRoadScreen(
                             else iconSize.toPx() / 2f
                             val endY = startY + itemHeight.toPx()
 
-                            val cpX = size.width / 2f        // punto di controllo orizzontale a metà
-                            val cpY = (startY + endY) / 2f  // punto di controllo verticale a metà
+                            val cpX = size.width / 2f
+                            val cpY = (startY + endY) / 2f
 
                             val path = Path().apply {
                                 moveTo(startX, startY)
@@ -108,7 +105,6 @@ fun BadgeRoadScreen(
                         }
                     }
             ) {
-                // allinea la stella a sinistra o destra
                 Box(
                     modifier = Modifier
                         .size(iconSize)
