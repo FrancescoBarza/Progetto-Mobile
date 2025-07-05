@@ -42,11 +42,9 @@ fun ReviewScreenContent(restaurantId: Int) {
         Theme.System -> isSystemInDarkTheme()
     }
 
-    val navController = rememberNavController()
-
     APPranzoTheme(darkTheme = darkTheme) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            ReviewScreen(restaurantId = restaurantId, navController = navController)
+            ReviewScreen(restaurantId = restaurantId)
         }
     }
 }

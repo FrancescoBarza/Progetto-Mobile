@@ -2,6 +2,7 @@ package com.example.appranzo.ui.screens
 
 import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -211,15 +212,30 @@ fun RestaurantDetailContent(
                             )
                         }
                     } else {
+
+// …con questo blocco:
                         items(reviews) { review ->
-                            ReviewItem(
-                                review = Review(
-                                    author = review.username,
-                                    date = review.creationDate,
-                                    rating = review.rating.toInt(),
-                                    content = review.comment
+                            Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                ReviewItem(
+                                    review = Review(
+                                        author  = review.username,
+                                        date    = review.creationDate,
+                                        rating  = review.rating.toInt(),
+                                        content = review.comment
+                                    )
                                 )
-                            )
+                                Spacer(Modifier.height(4.dp))
+                                Text(
+                                    text = "Vedi in dettaglio →",
+                                    style = MaterialTheme.typography.bodyMedium
+                                        .copy(color = MaterialTheme.colorScheme.primary),
+                                    modifier = Modifier
+                                        .padding(start = 16.dp)
+                                        .clickable {
+                                            // TODO: apri dettaglio recensione
+                                        }
+                                )
+                            }
                             Divider(Modifier.padding(vertical = 8.dp))
                         }
                     }

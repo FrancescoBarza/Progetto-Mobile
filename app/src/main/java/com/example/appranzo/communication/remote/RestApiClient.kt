@@ -140,6 +140,19 @@ class RestApiClient(val httpClient: HttpClient){
         }
     }
 
+    suspend fun getMyReviews(): List<ReviewDto> {
+        val url = "$REST_API_ADDRESS/reviews/me"
+        return try {
+            httpClient.get(url) {
+                bearerAuth(accessToken)
+                contentType(ContentType.Application.Json)
+            }.body()
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+
     suspend fun placeById(id:Int): Place? {
         try {
             val url = "$REST_API_ADDRESS/places/byId"

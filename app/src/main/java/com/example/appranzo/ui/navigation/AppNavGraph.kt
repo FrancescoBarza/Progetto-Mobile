@@ -20,6 +20,7 @@ import com.example.appranzo.ui.navigation.Routes.LOGIN
 import com.example.appranzo.ui.navigation.Routes.SETTINGS
 import com.example.appranzo.ui.screens.FavoritesScreen
 import com.example.appranzo.ui.screens.ProfileDetailScreen
+import com.example.appranzo.ui.screens.ProfileReviewsScreen
 import com.example.appranzo.ui.screens.ProfileScreen
 import com.example.appranzo.ui.screens.ReviewScreen
 import com.example.appranzo.ui.screens.SearchScreen
@@ -78,7 +79,11 @@ fun AppNavGraph(navController: NavHostController) {
             arguments = listOf(navArgument("restaurantId") { type = NavType.IntType })
         ) { backStackEntry ->
             val restaurantId = backStackEntry.arguments?.getInt("restaurantId") ?: return@composable
-            ReviewScreen(restaurantId = restaurantId, navController = navController)
+            ReviewScreen(restaurantId = restaurantId)
+        }
+
+        composable(Routes.PROFILE_REVIEWS) {
+            ProfileReviewsScreen(navController)
         }
 
 

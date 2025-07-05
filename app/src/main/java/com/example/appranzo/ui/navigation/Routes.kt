@@ -15,6 +15,7 @@ object Routes {
     // top‐bar
     const val PROFILE  = "profile"
     const val PROFILE_DETAILS  = "profile_details"
+    const val PROFILE_REVIEWS = "profile_reviews"
 
 
     const val SETTINGS = "settings"

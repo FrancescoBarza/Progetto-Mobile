@@ -19,6 +19,7 @@ import com.example.appranzo.viewmodel.FriendsViewModel
 import com.example.appranzo.viewmodel.PlaceDetailViewModel
 import com.example.appranzo.viewmodel.PlacesViewModel
 import com.example.appranzo.viewmodel.ProfileDetailViewModel
+import com.example.appranzo.viewmodel.ProfileReviewsViewModel
 import com.example.appranzo.viewmodel.ProfileViewModel
 import com.example.appranzo.viewmodel.ReviewViewModel
 import com.example.appranzo.viewmodel.SearchViewModel
@@ -63,6 +64,7 @@ val appModule = module {
 
     viewModel { ProfileViewModel(get(),get()) }
     viewModel { ProfileDetailViewModel(get()) }
+    viewModel { ProfileReviewsViewModel(get()) }
 
     viewModel { BadgeRoadViewModel() }
 

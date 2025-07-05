@@ -34,7 +34,6 @@ import java.io.InputStream
 @Composable
 fun ReviewScreen(
     restaurantId: Int,
-    navController: NavController,
     viewModel: ReviewViewModel = koinViewModel()
 ) {
     val rating by viewModel.rating.collectAsStateWithLifecycle()
@@ -59,7 +58,7 @@ fun ReviewScreen(
     if (submitState is SubmissionState.Success) {
         LaunchedEffect(Unit) {
             viewModel.resetState()
-            navController.popBackStack()
+            (context as? Activity)?.finish()
         }
     }
 
@@ -68,7 +67,7 @@ fun ReviewScreen(
             TopAppBar(
                 title = { Text("Lascia una recensione") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { (context as? Activity)?.finish() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Indietro"

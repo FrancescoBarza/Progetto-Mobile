@@ -27,11 +27,18 @@ data class ReviewDto(
     val creationDate: String
 )
 
+//lo uso per la pagina ProfileReviewsScreen
+// mi serve per fare vedere non solo la recensione
+// ma anche il nome del posto
 @Serializable
-data class ReviewCreationDto(
+data class ProfileReviewDto(
+    val id: Int,
     val placeId: Int,
+    val placeName: String,
+    val username: String,
+    val userPhotoUrl: List<String>,
     val rating: Byte,
     val comment: String,
-    val imageBase64: String? = null
-)
+    val creationDate: String
 
+)
